@@ -9,6 +9,14 @@ http://jimbojw.com/wiki/index.php?title=Understanding_Hbase_and_BigTable
 
 ## HBase requirement
 
+For using it locally, you can use docker. This will use [dajobe/hbase](github.com/dajobe/hbase-docker/)
+ , which will run hbase. You can use it to run the specs, for instance.
+
+```shell
+./start_hbase.sh
+```
+
+### Old instructions
 MassiveRecord is tested with Hortonworks Sandbox:
 http://hortonworks.com/products/sandbox
 
@@ -19,7 +27,9 @@ Currently, MassiveRecord is tested against HBase 1.1.4 which is pre-installed in
     3. Start HBase through the Ambari interface, log in through http://localhost:8080
     4. Start Thrift: /usr/bin/hbase thrift start
 
+
 ## Installation
+
 
 First of all: Please make sure you are using Ruby 1.9.2. For now, we are only ensuring
 that Massive Record works on that Ruby version, and we know it has some problems with 1.8.7.
@@ -203,7 +213,7 @@ You can, if you'd like, work directly against the adapter.
 It is however adviced to use the ORM as the interface to the adapter is not yet very well defined.
   
     # Init a new connection with HBase
-    conn = MassiveRecord::Wrapper::Connection.new(:host => '127.0.0.1', :port => 9090)
+    conn = MassiveRecord::Wrapper::Connection.new(:host => 'localhost', :port => 9090)
     conn.open
     
     # OR init a connection using the config/hbase.yml file with Rails
@@ -324,6 +334,63 @@ How to add a new column family to an existing table?
     disable 'companies'
     alter 'companies', { NAME => 'new_collumn_familiy' }
     enable 'companies'
+## Failing stuff on migrating
 
+Just work in progress
+```
+Finished in 1753.92 seconds
+1775 examples, 50 failures
+
+rspec ./spec/adapter/thrift/table_spec.rb:157 # A table created with a saved row should encode everything to UTF-8
+rspec ./spec/orm/cases/base_spec.rb:132 # MassiveRecord::ORM::Base equality should evaluate one object the same as equal
+rspec ./spec/orm/cases/base_spec.rb:137 # MassiveRecord::ORM::Base equality should evaluate two objects of same class and id as ==
+rspec ./spec/orm/cases/base_spec.rb:141 # MassiveRecord::ORM::Base equality should evaluate two objects of same class and id as eql?
+rspec ./spec/orm/cases/base_spec.rb:145 # MassiveRecord::ORM::Base equality should not be equal if ids are different
+rspec ./spec/orm/cases/base_spec.rb:149 # MassiveRecord::ORM::Base equality should not be equal if class are different
+rspec ./spec/orm/cases/base_spec.rb:155 # MassiveRecord::ORM::Base intersection and union operation should correctly find intersection two sets
+rspec ./spec/orm/cases/base_spec.rb:159 # MassiveRecord::ORM::Base intersection and union operation should correctly find union of two sets
+rspec ./spec/orm/cases/base_spec.rb:163 # MassiveRecord::ORM::Base intersection and union operation should correctly find intersection between two sets with different classes
+rspec ./spec/orm/cases/base_spec.rb:167 # MassiveRecord::ORM::Base intersection and union operation should correctly find union between two sets with different classes
+rspec ./spec/orm/cases/encoding_spec.rb:45 # encoding without ORM should return string as UTF-8 encoded strings
+rspec ./spec/orm/cases/finders_spec.rb:179 # finders#find database test should raise record not found error if table does not exist
+rspec ./spec/orm/cases/finders_spec.rb:184 # finders#find database test should return the person object when found
+rspec ./spec/orm/cases/finders_spec.rb:190 # finders#find database test should maintain encoding of ids
+rspec ./spec/orm/cases/finders_spec.rb:196 # finders#find database test should find first person
+rspec ./spec/orm/cases/finders_spec.rb:200 # finders#find database test should find all
+rspec ./spec/orm/cases/finders_spec.rb:206 # finders#find database test should find all persons, even if it is more than 10
+rspec ./spec/orm/cases/finders_spec.rb:211 # finders#find database test should raise error if not all requested records was found
+rspec ./spec/orm/cases/finders_spec.rb:215 # finders#find database test should return what it finds if asked to
+rspec ./spec/orm/cases/finders_spec.rb:229 # finders#find database test embedded records is able to load embeds many relations
+rspec ./spec/orm/cases/finders_spec.rb:238 # finders#find_in_batches should iterate through a collection of group of rows using a batch process
+rspec ./spec/orm/cases/finders_spec.rb:264 # finders#find_in_batches should iterate through a collection of rows using a batch process
+rspec ./spec/orm/cases/finders_spec.rb:277 # finders#exists? should return true if a row exists with given id
+rspec ./spec/orm/cases/persistence_spec.rb:88 # persistence#reload should reload the raw data
+rspec ./spec/orm/cases/persistence_spec.rb:95 # persistence#reload should not be considered changed after reload
+rspec ./spec/orm/cases/persistence_spec.rb:102 # persistence#reload should return self
+rspec ./spec/orm/cases/persistence_spec.rb:106 # persistence#reload should not do anything on reload when record is not persisted
+rspec ./spec/orm/cases/persistence_spec.rb:202 # persistence save database test create when table does not exists should create the table
+rspec ./spec/orm/cases/persistence_spec.rb:275 # persistence save database test update should not ask for row for record when no changes have been made (update is done through this object)
+rspec ./spec/orm/cases/persistence_spec.rb:280 # persistence save database test update should only include changed attributes
+rspec ./spec/orm/cases/persistence_spec.rb:290 # persistence save database test update should include changed attributes for embedded objects
+rspec ./spec/orm/cases/persistence_spec.rb:309 # persistence save database test update should persist the changes
+rspec ./spec/orm/cases/persistence_spec.rb:316 # persistence save database test update persists changes in embedded documents
+rspec ./spec/orm/cases/persistence_spec.rb:329 # persistence save database test update should not have any changes after save
+rspec ./spec/orm/cases/persistence_spec.rb:335 # persistence save database test update has no changes after an embedded object is added and saved
+rspec ./spec/orm/cases/persistence_spec.rb:341 # persistence save database test update should raise error if column familiy needed does not exist
+rspec ./spec/orm/cases/time_zone_awareness_spec.rb:77 # Time zone awareness conversion on attribute should return time as TimeWithZone when attribute accessed directly
+rspec ./spec/orm/cases/time_zone_awareness_spec.rb:84 # Time zone awareness conversion on attribute should return time as TimeWithZone when attribute accessed through read_attribute
+rspec ./spec/orm/cases/time_zone_awareness_spec.rb:91 # Time zone awareness conversion on attribute should return time in local time
+rspec ./spec/orm/cases/time_zone_awareness_spec.rb:112 # Time zone awareness conversion on attribute should return correct times after save
+rspec ./spec/orm/cases/time_zone_awareness_spec.rb:129 # Time zone awareness conversion on attribute should store time in DB format
+rspec ./spec/orm/cases/time_zone_awareness_spec.rb:146 # Time zone awareness conversion on attribute should store time in DB format, raw check
+rspec ./spec/orm/cases/time_zone_awareness_spec.rb:158 # Time zone awareness conversion on attribute write string representation pf time it writes string in current time zone
+rspec ./spec/orm/cases/time_zone_awareness_spec.rb:174 # Time zone awareness conversion on attribute write string representation pf time write_attribute writes in current time zone
+rspec ./spec/orm/relations/proxy/references_many_spec.rb:299 # TestReferencesManyProxy adding records to collection by #<< should not update array of foreign keys in proxy_owner if it does not respond to it
+rspec ./spec/orm/relations/proxy/references_many_spec.rb:299 # TestReferencesManyProxy adding records to collection by #push should not update array of foreign keys in proxy_owner if it does not respond to it
+rspec ./spec/orm/relations/proxy/references_many_spec.rb:299 # TestReferencesManyProxy adding records to collection by #concat should not update array of foreign keys in proxy_owner if it does not respond to it
+rspec ./spec/orm/relations/proxy/references_many_spec.rb:382 # TestReferencesManyProxy removing records from the collection with #destroy should not remove foreign keys in proxy_owner if it does not respond to it
+rspec ./spec/orm/relations/proxy/references_many_spec.rb:382 # TestReferencesManyProxy removing records from the collection with #delete should not remove foreign keys in proxy_owner if it does not respond to it
+rspec ./spec/thrift/cases/encoding_spec.rb:36 # encoding should save UTF8 caracteres
+```
 
 Copyright (c) 2011 Companybook, released under the MIT license

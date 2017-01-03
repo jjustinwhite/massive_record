@@ -15,13 +15,13 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency "rake"
   s.add_dependency "thrift", "=0.9.3"
-  s.add_dependency "activesupport", "~> 5.0"
-  s.add_dependency "activemodel", "~> 5.0"
+  s.add_dependency "activesupport", "~> 4.0"
+  s.add_dependency "activemodel", "~> 4.0"
   s.add_dependency "tzinfo"
   s.add_dependency "thin"
 
-  s.add_development_dependency "rspec", "~> 3.0"
-  s.add_development_dependency "rspec-its", "~> 1.2"
+  s.add_development_dependency "transpec"
+  s.add_development_dependency "rspec", "= 2.14"
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")

@@ -26,14 +26,14 @@ describe "A connection" do
     
     it "should be open if opened" do
       expect(conn.open).to be_true
-      expect(conn.open?).to be_true
+      expect(conn.open?).to be_truthy
       conn.close
     end
     
     it "should not be open if closed" do
       expect(conn.open).to be_true
-      expect(conn.close).to be_true
-      expect(conn.open?).to be_false
+      expect(conn.close).to be_truthy
+      expect(conn.open?).to be_falsey
     end
 
     it "shouldn't trigger any error if we try to close a close connection and there is no open connection" do

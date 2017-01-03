@@ -16,15 +16,15 @@ shared_examples_for "singular proxy" do
 
     describe "#respond_to?" do
       it "should check proxy to see if it responds to something" do
-        should respond_to :proxy_target
+        is_expected.to respond_to :proxy_target
       end
       
       it "should respond to proxy_target_method" do
-        should respond_to :proxy_target_method
+        is_expected.to respond_to :proxy_target_method
       end
 
       it "should not respond to a dummy method" do
-        should_not respond_to :dummy_method_which_does_not_exists 
+        is_expected.not_to respond_to :dummy_method_which_does_not_exists 
       end
     end
 
@@ -53,7 +53,7 @@ shared_examples_for "singular proxy" do
       end
 
       it "should be comparable correctly" do
-        expect(Person === subject).to be_true
+        expect(Person === subject).to be_truthy
       end
 
       it "should be compared correctly in a case when construction" do

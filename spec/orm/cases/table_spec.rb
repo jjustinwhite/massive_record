@@ -69,7 +69,7 @@ describe "Person which is a table" do
   end
   
   it "should parse a Boolean field properly" do
-    expect(@person.status).to be_false
+    expect(@person.status).to be_falsey
   end
 
   it "should decode/encode empty hashes correctly" do

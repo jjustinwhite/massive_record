@@ -25,7 +25,7 @@ shared_examples_for "validateable massive record model" do
 
   describe "persistance" do
     it "should not interrupt saving of a model if its valid" do
-      expect(@model.save).to be_true
+      expect(@model.save).to be_truthy
       expect(@model).to be_persisted
     end
 

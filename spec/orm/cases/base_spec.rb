@@ -139,7 +139,7 @@ describe MassiveRecord::ORM::Base do
     end
 
     it "should evaluate two objects of same class and id as eql?" do
-      expect(Person.find(1).eql?(Person.find(1))).to be_true
+      expect(Person.find(1).eql?(Person.find(1))).to be_truthy
     end
 
     it "should not be equal if ids are different" do

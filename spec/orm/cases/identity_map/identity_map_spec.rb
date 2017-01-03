@@ -22,12 +22,12 @@ describe MassiveRecord::ORM::IdentityMap do
 
           describe '#enabled' do
             subject { super().enabled }
-            it { should be_false }
+            it { is_expected.to be_falsey }
           end
 
           describe '#enabled?' do
             subject { super().enabled? }
-            it { should be_false }
+            it { is_expected.to be_falsey }
           end
         end
 
@@ -36,12 +36,12 @@ describe MassiveRecord::ORM::IdentityMap do
 
           describe '#enabled' do
             subject { super().enabled }
-            it { should be_true }
+            it { is_expected.to be_truthy }
           end
 
           describe '#enabled?' do
             subject { super().enabled? }
-            it { should be_true }
+            it { is_expected.to be_truthy }
           end
         end
       end
@@ -75,7 +75,7 @@ describe MassiveRecord::ORM::IdentityMap do
       describe ".repository" do
         describe '#repository' do
           subject { super().repository }
-          it { should eq Hash.new }
+          it { is_expected.to eq Hash.new }
         end
 
         it "has values as a hash by default for any key" do

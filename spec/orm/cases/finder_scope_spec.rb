@@ -19,7 +19,7 @@ describe MassiveRecord::ORM::Finders::Scope do
 
   describe "scoping methods" do
     (MassiveRecord::ORM::Finders::Scope::MULTI_VALUE_METHODS + MassiveRecord::ORM::Finders::Scope::SINGLE_VALUE_METHODS).each do |method|
-      it { should respond_to(method) }
+      it { is_expected.to respond_to(method) }
 
       it "should return an instance of self #{method}()" do
         expect(subject.send(method, nil)).to be_instance_of described_class
@@ -116,11 +116,11 @@ describe MassiveRecord::ORM::Finders::Scope do
 
 
   describe "loaded" do
-    it { should_not be_loaded }
+    it { is_expected.not_to be_loaded }
 
     it "should be loaded if set to true" do
        subject.loaded = true
-       should be_loaded
+       is_expected.to be_loaded
     end
   end
 
@@ -128,7 +128,7 @@ describe MassiveRecord::ORM::Finders::Scope do
     it "resets the loaded status" do
       subject.loaded = true
       subject.reset
-      should_not be_loaded
+      is_expected.not_to be_loaded
     end
 
     it "resets the loaded records" do
@@ -331,7 +331,7 @@ describe MassiveRecord::ORM::Finders::Scope do
       end
 
       it "should be possible to checkc if it includes something" do
-        expect(Person.limit(1).include?(person_2)).to be_false
+        expect(Person.limit(1).include?(person_2)).to be_falsey
       end
     end
   end

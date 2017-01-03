@@ -5,8 +5,8 @@ describe MassiveRecord::ORM::Relations::Metadata do
   subject { MassiveRecord::ORM::Relations::Metadata.new(nil) }
 
   %w(name foreign_key class_name relation_type find_with polymorphic records_starts_from inverse_of).each do |attr|
-    it { should respond_to attr }
-    it { should respond_to attr+"=" }
+    it { is_expected.to respond_to attr }
+    it { is_expected.to respond_to attr+"=" }
   end
 
 
@@ -32,7 +32,7 @@ describe MassiveRecord::ORM::Relations::Metadata do
 
   describe '#name' do
     subject { super().name }
-    it { should be_nil }
+    it { is_expected.to be_nil }
   end
 
   it "should return name as string" do
@@ -105,7 +105,7 @@ describe MassiveRecord::ORM::Relations::Metadata do
 
         describe '#embedded?' do
           subject { super().embedded? }
-          it { should be_false }
+          it { is_expected.to be_falsey }
         end
       end
     end
@@ -116,7 +116,7 @@ describe MassiveRecord::ORM::Relations::Metadata do
 
         describe '#embedded?' do
           subject { super().embedded? }
-          it { should be_true }
+          it { is_expected.to be_truthy }
         end
       end
     end
@@ -128,7 +128,7 @@ describe MassiveRecord::ORM::Relations::Metadata do
 
       describe '#store_in' do
         subject { super().store_in }
-        it { should be_nil }
+        it { is_expected.to be_nil }
       end
 
       it "should be able to set column family to store foreign key in" do
@@ -138,13 +138,13 @@ describe MassiveRecord::ORM::Relations::Metadata do
 
       it "should know its persisting foreign key if foreign key stored in has been set" do
         subject.store_in = :info
-        should be_persisting_foreign_key
+        is_expected.to be_persisting_foreign_key
       end
 
       it "should not be storing the foreign key if records_starts_from is defined" do
         subject.store_in = :info
         subject.records_starts_from = :method_which_returns_a_starting_point
-        should_not be_persisting_foreign_key
+        is_expected.not_to be_persisting_foreign_key
       end
     end
 
@@ -156,12 +156,12 @@ describe MassiveRecord::ORM::Relations::Metadata do
 
       describe '#store_in' do
         subject { super().store_in }
-        it { should eq "addresses" }
+        it { is_expected.to eq "addresses" }
       end
 
       describe '#persisting_foreign_key?' do
         subject { super().persisting_foreign_key? }
-        it { should be_false }
+        it { is_expected.to be_falsey }
       end
     end
   end

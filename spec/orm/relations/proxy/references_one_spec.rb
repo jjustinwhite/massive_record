@@ -113,6 +113,6 @@ describe TestReferencesOneProxy do
   it "resets when the proxy owner is asked to reload" do
     subject.loaded!
     proxy_owner.reload
-    should_not be_loaded
+    is_expected.not_to be_loaded
   end
 end

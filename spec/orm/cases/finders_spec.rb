@@ -275,11 +275,11 @@ describe "finders" do
     include CreatePersonBeforeEach
 
     it "should return true if a row exists with given id" do
-      expect(Person.exists?("ID1")).to be_true
+      expect(Person.exists?("ID1")).to be_truthy
     end
 
     it "should return false if a row does not exists with given id" do
-      expect(Person.exists?("unkown")).to be_false
+      expect(Person.exists?("unkown")).to be_falsey
     end
   end
 end

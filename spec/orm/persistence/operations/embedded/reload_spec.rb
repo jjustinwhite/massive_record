@@ -24,7 +24,7 @@ describe MassiveRecord::ORM::Persistence::Operations::Embedded::Reload do
 
       describe '#execute' do
         subject { super().execute }
-        it { should be_false }
+        it { is_expected.to be_falsey }
       end
     end
 
@@ -38,7 +38,7 @@ describe MassiveRecord::ORM::Persistence::Operations::Embedded::Reload do
 
       it "just returns false if no not embedded in any proxies" do
         allow(subject).to receive(:embedded_in_proxies).and_return []
-        expect(subject.execute).to be_false
+        expect(subject.execute).to be_falsey
       end
 
       it "asks for inverse proxy" do

@@ -36,7 +36,7 @@ describe MassiveRecord::ORM::Persistence::Operations::Embedded::Insert do
 
         it "returns false if none of the embedded_in_proxy_targets returned true" do
           expect(person).to receive(:save).and_return false
-          expect(subject.execute).to be_false
+          expect(subject.execute).to be_falsey
         end
 
         it "is changed when reloading" do

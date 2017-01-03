@@ -274,7 +274,7 @@ describe TestReferencesManyProxy do
 
         it "should not add invalid objects to collection" do
           expect(proxy_target).to receive(:valid?).and_return false
-          expect(subject.send(add_method, proxy_target)).to be_false
+          expect(subject.send(add_method, proxy_target)).to be_falsey
           expect(subject.proxy_target).not_to include proxy_target
         end
 
@@ -356,7 +356,7 @@ describe TestReferencesManyProxy do
           expect(proxy_target_2).not_to receive(:save)
           expect(proxy_owner).not_to receive(:save)
 
-          expect(subject.send(add_method, [proxy_target, proxy_target_2])).to be_false
+          expect(subject.send(add_method, [proxy_target, proxy_target_2])).to be_falsey
         end
       end
     end
@@ -447,7 +447,7 @@ describe TestReferencesManyProxy do
 
       it "should be loaded after all being destroyed" do
         subject.destroy_all
-        should be_loaded
+        is_expected.to be_loaded
       end
 
       it "should call destroy on each record" do
@@ -485,7 +485,7 @@ describe TestReferencesManyProxy do
 
       it "should be loaded after all being destroyed" do
         subject.delete_all
-        should be_loaded
+        is_expected.to be_loaded
       end
 
       it "should not call destroy on each record" do
@@ -639,12 +639,12 @@ describe TestReferencesManyProxy do
 
     it "checks the length and return true if it is greater than 0" do
       expect(subject).to receive(:length).and_return 1
-      expect(subject.any?).to be_true
+      expect(subject.any?).to be_truthy
     end
 
     it "checks the length and return false if it is 0" do
       expect(subject).to receive(:length).and_return 0
-      expect(subject.any?).to be_false
+      expect(subject.any?).to be_falsey
     end
 
     context "when find with proc" do
@@ -655,12 +655,12 @@ describe TestReferencesManyProxy do
 
       it "asks for first and returns false if first is nil" do
         expect(subject).to receive(:first).and_return nil
-        expect(subject.any?).to be_false
+        expect(subject.any?).to be_falsey
       end
 
       it "asks for first and returns true if first is a record" do
         expect(subject).to receive(:first).and_return proxy_target
-        expect(subject.any?).to be_true
+        expect(subject.any?).to be_truthy
       end
     end
   end
@@ -670,12 +670,12 @@ describe TestReferencesManyProxy do
 
     it "checks the length and return true if it is greater than 0" do
       expect(subject).to receive(:length).and_return 1
-      expect(subject.present?).to be_true
+      expect(subject.present?).to be_truthy
     end
 
     it "checks the length and return false if it is 0" do
       expect(subject).to receive(:length).and_return 0
-      expect(subject.present?).to be_false
+      expect(subject.present?).to be_falsey
     end
   end
 
@@ -715,23 +715,23 @@ describe TestReferencesManyProxy do
 
         it "should return that it includes it's proxy_target when loaded" do
           subject.reload if should_persist_proxy_owner
-          should include proxy_target
+          is_expected.to include proxy_target
         end
 
         it "should return that it includes it's proxy_target when not loaded" do
           subject.reset if should_persist_proxy_owner
-          should include proxy_target
+          is_expected.to include proxy_target
         end
 
         it "should return that it includes it's proxy_target when a record is added" do
           subject << proxy_target_2
-          should include proxy_target, proxy_target_2
+          is_expected.to include proxy_target, proxy_target_2
         end
 
         it "should return that it includes it's proxy_target when a record is added to an unloaded proxy" do
           subject.reset if should_persist_proxy_owner
           subject << proxy_target_2
-          should include proxy_target, proxy_target_2
+          is_expected.to include proxy_target, proxy_target_2
         end
       end
     end
@@ -1089,6 +1089,6 @@ describe TestReferencesManyProxy do
   it "resets when the proxy owner is asked to reload" do
     subject.loaded!
     proxy_owner.reload
-    should_not be_loaded
+    is_expected.not_to be_loaded
   end
 end

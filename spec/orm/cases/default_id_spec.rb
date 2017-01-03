@@ -53,7 +53,7 @@ describe ModelWithoutDefaultId do
 
     describe '#set_id_from_factory_before_create' do
       subject { super().set_id_from_factory_before_create }
-      it { be_false }
+      it { be_falsey }
     end
 
     it "raises error as expected when id is missing" do

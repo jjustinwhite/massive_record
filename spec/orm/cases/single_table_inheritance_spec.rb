@@ -12,7 +12,7 @@ describe "Single table inheritance" do
 
       describe '#type' do
         subject { super().type }
-        it { should == klass.to_s }
+        it { is_expected.to eq(klass.to_s) }
       end
 
       it "instantiates correct class when reading from database via super class" do

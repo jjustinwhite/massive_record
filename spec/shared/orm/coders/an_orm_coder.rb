@@ -1,6 +1,6 @@
 shared_examples_for "an orm coder" do
-  it { should respond_to :load }
-  it { should respond_to :dump }
+  it { is_expected.to respond_to :load }
+  it { is_expected.to respond_to :dump }
 
   [1, "1", nil, ["foo"], {'foo' => 'bar', "1" => 3}, {'nested' => {'inner' => 'secret'}}].each do |value|
     it "should dump a #{value.class} correctly" do

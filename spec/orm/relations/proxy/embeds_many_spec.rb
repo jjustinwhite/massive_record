@@ -42,7 +42,7 @@ describe TestEmbedsManyProxy do
     context "proxy owner is new record" do
       describe '#proxy_targets_raw' do
         subject { super().proxy_targets_raw }
-        it { should be_empty }
+        it { is_expected.to be_empty }
       end
     end
 
@@ -420,7 +420,7 @@ describe TestEmbedsManyProxy do
 
       describe '#load_proxy_target' do
         subject { super().load_proxy_target }
-        it { should eq [] }
+        it { is_expected.to eq [] }
       end
 
       it "includes added records to collection" do
@@ -434,11 +434,11 @@ describe TestEmbedsManyProxy do
 
       describe '#load_proxy_target' do
         subject { super().load_proxy_target }
-        it { should include proxy_target, proxy_target_2, proxy_target_3 }
+        it { is_expected.to include proxy_target, proxy_target_2, proxy_target_3 }
       end
 
       it "sets inverse of in loaded records" do
-        expect(subject.load_proxy_target.all? { |r| expect(r.person).to eq proxy_owner }).to be_true
+        expect(subject.load_proxy_target.all? { |r| expect(r.person).to eq proxy_owner }).to be_truthy
       end
     end
   end
@@ -464,7 +464,7 @@ describe TestEmbedsManyProxy do
 
         describe '#proxy_targets_update_hash' do
           subject { super().proxy_targets_update_hash }
-          it { should be_empty }
+          it { is_expected.to be_empty }
         end
       end
 
@@ -598,27 +598,27 @@ describe TestEmbedsManyProxy do
     end
 
     it "returns false if no changes has been made which needs persistence" do
-      should_not be_changed
+      is_expected.not_to be_changed
     end
 
     it "returns true if it contains new records" do
       expect(proxy_target).to receive(:new_record?).and_return true
-      should be_changed
+      is_expected.to be_changed
     end
 
     it "returns true if it contains destroyed records" do
       expect(proxy_target).to receive(:destroyed?).and_return true
-      should be_changed
+      is_expected.to be_changed
     end
 
     it "returns true if it contains changed records" do
       expect(proxy_target).to receive(:changed?).and_return true
-      should be_changed
+      is_expected.to be_changed
     end
 
     it "returns true if some records has been asked to be destroyed through proxy" do
       subject.destroy(proxy_target)
-      should be_changed
+      is_expected.to be_changed
     end
   end
 

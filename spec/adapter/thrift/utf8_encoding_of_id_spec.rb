@@ -38,7 +38,7 @@ describe MassiveRecord::Wrapper::Row do
   describe "ids utf-8 encoded" do
     context "new record" do
       it "saves" do
-        expect(subject.save).to be_true
+        expect(subject.save).to be_truthy
       end
     end
 

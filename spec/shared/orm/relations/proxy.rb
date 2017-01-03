@@ -8,7 +8,7 @@ shared_examples_for "relation proxy" do
 
   %w(proxy_owner proxy_target metadata).each do |method|
     it "should respond to #{method}" do
-      should respond_to method
+      is_expected.to respond_to method
     end
   end
 
@@ -22,18 +22,18 @@ shared_examples_for "relation proxy" do
   describe "#loaded" do
     it "should be true when loaded" do
       subject.instance_variable_set :@loaded, true
-      should be_loaded
+      is_expected.to be_loaded
     end
 
     it "should be false when not loaded" do
       subject.instance_variable_set :@loaded, false
-      should_not be_loaded
+      is_expected.not_to be_loaded
     end
 
     it "should be loaded when loaded! is called" do
       subject.instance_variable_set :@loaded, false
       subject.loaded!
-      should be_loaded
+      is_expected.to be_loaded
     end
   end
 
@@ -43,9 +43,9 @@ shared_examples_for "relation proxy" do
       subject.loaded!
       subject.reset
       if subject.metadata.embedded_in?
-        should be_loaded
+        is_expected.to be_loaded
       else
-        should_not be_loaded
+        is_expected.not_to be_loaded
       end
     end
 
@@ -97,7 +97,7 @@ shared_examples_for "relation proxy" do
 
     it "should be consodered loaded if a proxy_target has been set" do
       subject.proxy_target = proxy_target
-      should be_loaded
+      is_expected.to be_loaded
     end
 
     it "should not try to load proxy_target if it has been loaded" do

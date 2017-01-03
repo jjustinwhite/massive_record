@@ -34,7 +34,7 @@ describe MassiveRecord::ORM::IdFactory::Timestamp do
       let(:time) { double(Time) }
 
       before do
-        time.stub_chain(:getutc, :to_f).and_return(1)
+        allow(time).to receive_message_chain(:getutc, :to_f).and_return(1)
         allow(Time).to receive(:now).and_return time
       end
 

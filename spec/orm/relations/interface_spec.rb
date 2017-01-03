@@ -11,7 +11,7 @@ describe MassiveRecord::ORM::Relations::Interface do
 
     describe "should include" do
       %w(references_one).each do |relation|
-        it { should respond_to relation }
+        it { is_expected.to respond_to relation }
       end
     end
 
@@ -44,10 +44,10 @@ describe MassiveRecord::ORM::Relations::Interface do
       let(:boss) { PersonWithTimestamp.new }
       let(:proxy) { subject.send(:relation_proxy, "boss") }
 
-      it { should respond_to :boss }
-      it { should respond_to :boss= }
-      it { should respond_to :boss_id }
-      it { should respond_to :boss_id= }
+      it { is_expected.to respond_to :boss }
+      it { is_expected.to respond_to :boss= }
+      it { is_expected.to respond_to :boss_id }
+      it { is_expected.to respond_to :boss_id= }
 
 
       describe "record getter and setter" do
@@ -121,12 +121,12 @@ describe MassiveRecord::ORM::Relations::Interface do
       subject { TestClass.new }
       let(:attachable) { Person.new }
 
-      it { should respond_to :attachable }
-      it { should respond_to :attachable= }
-      it { should respond_to :attachable_id }
-      it { should respond_to :attachable_id= }
-      it { should respond_to :attachable_type }
-      it { should respond_to :attachable_type= }
+      it { is_expected.to respond_to :attachable }
+      it { is_expected.to respond_to :attachable= }
+      it { is_expected.to respond_to :attachable_id }
+      it { is_expected.to respond_to :attachable_id= }
+      it { is_expected.to respond_to :attachable_type }
+      it { is_expected.to respond_to :attachable_type= }
 
 
       describe "record getter and setter" do
@@ -201,10 +201,10 @@ describe MassiveRecord::ORM::Relations::Interface do
       let(:test_class) { TestClass.new }
       let(:proxy) { subject.send(:relation_proxy, "test_classes") }
 
-      it { should respond_to :test_classes }
-      it { should respond_to :test_classes= }
-      it { should respond_to :test_class_ids }
-      it { should respond_to :test_class_ids= }
+      it { is_expected.to respond_to :test_classes }
+      it { is_expected.to respond_to :test_classes= }
+      it { is_expected.to respond_to :test_class_ids }
+      it { is_expected.to respond_to :test_class_ids= }
 
       it "should have an array as foreign_key attribute" do
         expect(subject.test_class_ids).to be_instance_of Array
@@ -246,7 +246,7 @@ describe MassiveRecord::ORM::Relations::Interface do
         let(:address) { Address.new :street => "Asker" }
         let(:proxy) { subject.send(:relation_proxy, "addresses") }
 
-        it { should respond_to :addresses }
+        it { is_expected.to respond_to :addresses }
 
         it "should be empty when no addresses has been added" do
           expect(subject.addresses).to be_empty
@@ -297,7 +297,7 @@ describe MassiveRecord::ORM::Relations::Interface do
         let(:car) { Car.new :color => "blue" }
         let(:proxy) { subject.send(:relation_proxy, "cars") }
 
-        it { should respond_to :cars }
+        it { is_expected.to respond_to :cars }
 
         it "should be empty when no cars has been added" do
           expect(subject.cars).to be_empty

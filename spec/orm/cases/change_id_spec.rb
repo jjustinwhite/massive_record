@@ -23,7 +23,7 @@ describe MassiveRecord::ORM::Table do
 
       describe '#id' do
         subject { super().id }
-        it { should eq new_id }
+        it { is_expected.to eq new_id }
       end
 
       it "saves itself with new id" do

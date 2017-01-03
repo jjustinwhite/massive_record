@@ -50,7 +50,7 @@ describe "A table" do
 
       it "should exists in the database" do
         t = table
-        expect(t.exists?).to be_true
+        expect(t.exists?).to be_truthy
         t.destroy
       end
   
@@ -172,7 +172,7 @@ describe "A table" do
       it "should persist row changes" do
         row = @myTable.first
         row.update_columns({ :info => { :first_name => "Bob" } })
-        expect(row.save).to be_true
+        expect(row.save).to be_truthy
 
         row = @myTable.first
         expect(row.values["info:first_name"]).to eq("Bob")
@@ -261,7 +261,7 @@ describe "A table" do
       end
       
       it "should delete a row" do
-        expect(@myTable.first.destroy).to be_true
+        expect(@myTable.first.destroy).to be_truthy
       end
             
     end
@@ -301,7 +301,7 @@ describe "A table" do
       ids_list = [["A1"], ["A1", "A2", "A3"]]
       ids_list.each do |ids|
         @myTable.find(ids).each do |row|
-          expect(ids.include?(row.id)).to be_true
+          expect(ids.include?(row.id)).to be_truthy
         end
       end
     end

@@ -15,27 +15,27 @@ describe "default values" do
   context "new record" do
     describe '#dictionary' do
       subject { super().dictionary }
-      it { should eq Hash.new }
+      it { is_expected.to eq Hash.new }
     end
 
     describe '#points' do
       subject { super().points }
-      it { should eq 1 }
+      it { is_expected.to eq 1 }
     end
 
     describe '#status' do
       subject { super().status }
-      it { should eq false }
+      it { is_expected.to eq false }
     end
 
     describe '#positive_as_default' do
       subject { super().positive_as_default }
-      it { should eq true }
+      it { is_expected.to eq true }
     end
 
     describe '#phone_numbers' do
       subject { super().phone_numbers }
-      it { should eq [] }
+      it { is_expected.to eq [] }
     end
   end
 
@@ -52,27 +52,27 @@ describe "default values" do
 
     describe '#dictionary' do
       subject { super().dictionary }
-      it { should be_nil }
+      it { is_expected.to be_nil }
     end
 
     describe '#points' do
       subject { super().points }
-      it { should be_nil }
+      it { is_expected.to be_nil }
     end
 
     describe '#status' do
       subject { super().status }
-      it { should be_nil }
+      it { is_expected.to be_nil }
     end
 
     describe '#positive_as_default' do
       subject { super().positive_as_default }
-      it { should be_false }
+      it { is_expected.to be_falsey }
     end
 
     describe '#phone_numbers' do
       subject { super().phone_numbers }
-      it { should eq [] }
+      it { is_expected.to eq [] }
     end
   end
 end

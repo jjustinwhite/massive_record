@@ -22,7 +22,7 @@ describe "dirty" do
         before { subject.addresses << address }
 
         it "iterates over embedded relations and asks them if they have changes" do
-          should be_changed
+          is_expected.to be_changed
         end
 
         it "includes addresses in changed" do
@@ -51,17 +51,17 @@ describe "dirty" do
 
       it "should not be changed if attribute is set to what it currently is" do
         subject.name = "Alice"
-        should_not be_changed
+        is_expected.not_to be_changed
       end
 
       it "should notice changes" do
         subject.name = "Bob"
-        should be_changed
+        is_expected.to be_changed
       end
 
       it "should notice changes in boolean values from false to true" do
         subject.status = !subject.status
-        should be_status_changed
+        is_expected.to be_status_changed
       end
 
       it "notices changes in time attributes" do
@@ -76,18 +76,18 @@ describe "dirty" do
         subject.status = true
         subject.save
         subject.status = false
-        should be_status_changed
+        is_expected.to be_status_changed
       end
 
       it "should not consider age set as string to the same as integer a change" do
         subject.age = "20"
-        should_not be_age_changed
+        is_expected.not_to be_age_changed
       end
 
       it "should not consider age set as string back to original value a change" do
         subject.age = 30
         subject.age = "20"
-        should_not be_age_changed
+        is_expected.not_to be_age_changed
       end
 
 
@@ -95,7 +95,7 @@ describe "dirty" do
         original_name = subject.name
         subject.name = "Bob"
         subject.name = original_name
-        should_not be_changed
+        is_expected.not_to be_changed
       end
 
       it "should always keep the objects original value as _was" do
@@ -115,26 +115,26 @@ describe "dirty" do
         it "on save" do
           subject.name = "Bob"
           subject.save
-          should_not be_changed
+          is_expected.not_to be_changed
         end
 
         it "on save, but don't do it if save fails validation" do
           expect(subject).to receive(:valid?).and_return(false)
           subject.name = "Bob"
           subject.save
-          should be_changed
+          is_expected.to be_changed
         end
 
         it "on save!" do
           subject.name = "Bob"
           subject.save!
-          should_not be_changed
+          is_expected.not_to be_changed
         end
 
         it "on reload" do
           subject.name = "Bob"
           subject.reload
-          should_not be_changed
+          is_expected.not_to be_changed
         end
       end
 

@@ -112,7 +112,7 @@ describe MassiveRecord::ORM::Schema::Field do
     it "should decode a boolean value" do
       @subject = MassiveRecord::ORM::Schema::Field.new(:name => :status, :type => :boolean)
       expect(@subject.decode("1")).to be_true
-      expect(@subject.decode("0")).to be_false
+      expect(@subject.decode("0")).to be_falsey
       expect(@subject.decode("")).to be_nil
       expect(@subject.decode(nil)).to be_nil
       expect(@subject.decode("null")).to be_nil
@@ -383,7 +383,7 @@ describe MassiveRecord::ORM::Schema::Field do
     context "when nil is not allowed" do
       subject { MassiveRecord::ORM::Schema::Field.new(:name => :test, :allow_nil => false) }
 
-      it { should_not be_allow_nil }
+      it { is_expected.not_to be_allow_nil }
 
       MassiveRecord::ORM::Schema::Field::TYPES_DEFAULTS_TO.reject { |type| type == :time }.each do |type, default|
         default = default.respond_to?(:call) ? default.call : default

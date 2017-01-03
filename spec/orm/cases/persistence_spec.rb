@@ -118,11 +118,11 @@ describe "persistence" do
       end
 
       it "should update given attriubte when valid" do
-        expect(@person.update_attribute(:name, "new")).to be_true
+        expect(@person.update_attribute(:name, "new")).to be_truthy
       end
 
       it "should update given attribute when invalid" do
-        expect(@person.update_attribute(:name, nil)).to be_true
+        expect(@person.update_attribute(:name, nil)).to be_truthy
       end
     end
   end
@@ -136,11 +136,11 @@ describe "persistence" do
       end
 
       it "should update given attriubtes when valid" do
-        expect(@person.update_attributes(:name => "new", :age => "66")).to be_true
+        expect(@person.update_attributes(:name => "new", :age => "66")).to be_truthy
       end
 
       it "should not update given attributes when one is invalid" do
-        expect(@person.update_attributes(:name => nil, :age => "66")).to be_false
+        expect(@person.update_attributes(:name => nil, :age => "66")).to be_falsey
       end
 
       it "should raise error when called with a bang" do

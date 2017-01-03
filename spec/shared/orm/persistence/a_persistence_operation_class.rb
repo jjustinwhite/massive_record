@@ -4,7 +4,7 @@ shared_examples_for "a persistence operation class" do
 
     describe '#included_modules' do
       subject { super().included_modules }
-      it { should include MassiveRecord::ORM::Persistence::Operations }
+      it { is_expected.to include MassiveRecord::ORM::Persistence::Operations }
     end
   end
 

@@ -18,7 +18,7 @@ describe MassiveRecord::ORM::Persistence::Operations::Reload do
 
       describe '#execute' do
         subject { super().execute }
-        it { should be_false }
+        it { is_expected.to be_falsey }
       end
 
       it "does no find" do
@@ -30,7 +30,7 @@ describe MassiveRecord::ORM::Persistence::Operations::Reload do
     context "persisted" do
       describe '#execute' do
         subject { super().execute }
-        it { should be_true }
+        it { is_expected.to be_truthy }
       end
 
       it "asks class to find it's id" do

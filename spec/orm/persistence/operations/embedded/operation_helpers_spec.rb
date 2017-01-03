@@ -39,14 +39,14 @@ module MassiveRecord
               end
 
               it "returns proxies which represents embedded in relations" do
-                expect(subject.embedded_in_proxies.all? { |p| p.metadata.embedded_in? }).to be_true
+                expect(subject.embedded_in_proxies.all? { |p| p.metadata.embedded_in? }).to be_truthy
               end
             end
 
             describe "#embedded_in_proxy_targets" do
               describe '#embedded_in_proxy_targets' do
                 subject { super().embedded_in_proxy_targets }
-                it { should include person }
+                it { is_expected.to include person }
               end
             end
 

@@ -1,3 +1,4 @@
+require 'rails/observers/active_model/observing'
 module MassiveRecord
   module ORM
 

@@ -9,6 +9,7 @@ module MassiveRecord
       end
 
       module ClassMethods
+        extend Memoist
 
         @@connection = nil
 
@@ -33,10 +34,9 @@ module MassiveRecord
 
 
         def table
-          @table ||= begin
-                       MassiveRecord::Wrapper::Table.new(connection, table_name)
-                     end
+          MassiveRecord::Wrapper::Table.new(connection, table_name)
         end
+        memoize :table
 
         def table_exists?
           connection.tables.include?(table_name)

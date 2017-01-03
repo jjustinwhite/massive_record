@@ -1,3 +1,14 @@
-test:
-  pre: 
+machine:
+  ruby:
+    version: 2.3.1
+  pre:
+    - curl -sSL https://s3.amazonaws.com/circle-downloads/install-circleci-docker.sh | bash -s -- 1.10.0
+  services:
+    - docker
+dependencies:
+  pre:
     - './start_hbase.sh'
+    - gem install bundler
+  cache_directories:
+    - "var/lib/docker"
+    - "vendor/bundle"

@@ -38,7 +38,7 @@ module MassiveRecord
 
         multiparameter_attributes = []
 
-        sanitize_for_mass_assignment(new_attributes).each do |attr, value|
+        new_attributes.each do |attr, value|
           if multiparameter? attr
             multiparameter_attributes << [attr, value]
           else

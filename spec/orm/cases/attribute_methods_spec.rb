@@ -7,58 +7,58 @@ describe "attribute methods" do
   subject { Person.new "5", :name => "John", :age => "15" }
 
   it "should define reader method" do
-    subject.name.should == "John"
+    expect(subject.name).to eq("John")
   end
 
   it "should define writer method" do
     subject.name = "Bar"
-    subject.name.should == "Bar"
+    expect(subject.name).to eq("Bar")
   end
 
   it "should be possible to write attributes" do
     subject.write_attribute :name, "baaaaar"
-    subject.name.should == "baaaaar"
+    expect(subject.name).to eq("baaaaar")
   end
 
 
   it "converts correcly written floats as string to float on write" do
     subject.write_attribute(:carma, "1.5")
-    subject.carma.should eq 1.5
+    expect(subject.carma).to eq 1.5
   end
 
   it "converts baldy written floats as string to float on write" do
     subject.write_attribute(:carma, "1.5f")
-    subject.carma.should eq 1.5
+    expect(subject.carma).to eq 1.5
   end
 
   it "keeps nil when assigned to float" do
     subject.write_attribute(:carma, nil)
-    subject.carma.should eq nil
+    expect(subject.carma).to eq nil
   end
 
   it "keeps empty string when assigned to float" do
     subject.write_attribute(:carma, "")
-    subject.carma.should eq nil
+    expect(subject.carma).to eq nil
   end
 
   it "converts correcly written integers as string to integer on write" do
     subject.write_attribute(:points, "1")
-    subject.points.should eq 1
+    expect(subject.points).to eq 1
   end
 
   it "converts baldy written integers as string to integer on write" do
     subject.write_attribute(:points, "1f")
-    subject.points.should eq 1
+    expect(subject.points).to eq 1
   end
 
   it "keeps nil when assigned to integer" do
     subject.write_attribute(:points, nil)
-    subject.points.should eq nil
+    expect(subject.points).to eq nil
   end
 
   it "keeps empty string when assigned to integer" do
     subject.write_attribute(:points, "")
-    subject.points.should eq nil
+    expect(subject.points).to eq nil
   end
 
 
@@ -66,47 +66,47 @@ describe "attribute methods" do
 
 
   it "should be possible to read attributes" do
-    subject.read_attribute(:name).should == "John"
+    expect(subject.read_attribute(:name)).to eq("John")
   end
 
   it "should return casted value when read" do
-    subject.read_attribute(:age).should == 15
+    expect(subject.read_attribute(:age)).to eq(15)
   end
 
   it "should read from a method if it has been defined" do
-    subject.should_receive(:_name).and_return("my name is")
-    subject.read_attribute(:name).should eq "my name is"
+    expect(subject).to receive(:_name).and_return("my name is")
+    expect(subject.read_attribute(:name)).to eq "my name is"
   end
   
   describe "#attributes" do
     it "should contain the id" do
-      subject.attributes.should include("id")
+      expect(subject.attributes).to include("id")
     end
 
     it "should not return @attributes directly" do
-      subject.attributes.object_id.should_not == subject.instance_variable_get(:@attributes).object_id
+      expect(subject.attributes.object_id).not_to eq(subject.instance_variable_get(:@attributes).object_id)
     end
 
     it "should ask read_attribute for help" do
-      subject.should_receive(:read_attribute).any_number_of_times.and_return("stub")
-      subject.attributes['name'].should eq 'stub'
+      allow(subject).to receive(:read_attribute).and_return("stub")
+      expect(subject.attributes['name']).to eq 'stub'
     end
   end
 
   describe "#attributes=" do
     it "should simply return if incomming value is not a hash" do
       subject.attributes = "FOO BAR"
-      subject.attributes.keys.should include("name")
+      expect(subject.attributes.keys).to include("name")
     end
 
     it "should mass assign attributes" do
       subject.attributes = {:name => "Foo", :age => 20}
-      subject.name.should == "Foo"
-      subject.age.should == 20
+      expect(subject.name).to eq("Foo")
+      expect(subject.age).to eq(20)
     end
 
     it "should raise an error if we encounter an unkown attribute" do
-      lambda { subject.attributes = {:unkown => "foo"} }.should raise_error MassiveRecord::ORM::UnknownAttributeError
+      expect { subject.attributes = {:unkown => "foo"} }.to raise_error MassiveRecord::ORM::UnknownAttributeError
     end
 
     describe "multiparameter" do
@@ -122,25 +122,25 @@ describe "attribute methods" do
 
         it "parses a complete multiparameter" do
           subject.attributes = params
-          subject.date_of_birth.should eq date
+          expect(subject.date_of_birth).to eq date
         end
 
         it "parses when year is missing" do
           params["date_of_birth(1i)"] = ""
           subject.attributes = params
-          subject.date_of_birth.should eq Date.new(1, date.month, date.day)
+          expect(subject.date_of_birth).to eq Date.new(1, date.month, date.day)
         end
 
         it "parses when month is missing" do
           params["date_of_birth(2i)"] = ""
           subject.attributes = params
-          subject.date_of_birth.should eq Date.new(date.year, 1, date.day)
+          expect(subject.date_of_birth).to eq Date.new(date.year, 1, date.day)
         end
 
         it "parses when day is missing" do
           params["date_of_birth(3i)"] = ""
           subject.attributes = params
-          subject.date_of_birth.should eq Date.new(date.year, date.month, 1)
+          expect(subject.date_of_birth).to eq Date.new(date.year, date.month, 1)
         end
 
         it "sets to nil if all are blank" do
@@ -148,7 +148,7 @@ describe "attribute methods" do
           params["date_of_birth(2i)"] = ""
           params["date_of_birth(3i)"] = ""
           subject.attributes = params
-          subject.date_of_birth.should be_nil
+          expect(subject.date_of_birth).to be_nil
         end
 
         it "ignores the overflow of arguments" do
@@ -156,13 +156,13 @@ describe "attribute methods" do
           params["date_of_birth(5i)"] = "2"
           params["date_of_birth(6i)"] = "3"
           subject.attributes = params
-          subject.date_of_birth.should eq date
+          expect(subject.date_of_birth).to eq date
         end
 
         it "sets to nil if any of the values are on wrong format" do
           params["date_of_birth(3i)"] = "foobar"
           subject.attributes = params
-          subject.date_of_birth.should be_nil
+          expect(subject.date_of_birth).to be_nil
         end
       end
 
@@ -184,13 +184,13 @@ describe "attribute methods" do
 
         it "parses complete multiparameter" do
           subject.attributes = params
-          subject.last_signed_in_at.should eq time
+          expect(subject.last_signed_in_at).to eq time
         end
 
         it "parses complete multiparameter with time zone" do
           in_time_zone tz_us do
             subject.attributes = params
-            subject.last_signed_in_at.should eq time.in_time_zone(tz_us)
+            expect(subject.last_signed_in_at).to eq time.in_time_zone(tz_us)
           end
         end
 
@@ -198,7 +198,7 @@ describe "attribute methods" do
           year = 1835
           params["last_signed_in_at(1i)"] = year.to_s
           subject.attributes = params
-          subject.last_signed_in_at.should eq Time.new(
+          expect(subject.last_signed_in_at).to eq Time.new(
             year, time.month, time.day,
             time.hour, time.min, time.sec
           )
@@ -207,7 +207,7 @@ describe "attribute methods" do
         it "parses when year is missing" do
           params["last_signed_in_at(1i)"] = ""
           subject.attributes = params
-          subject.last_signed_in_at.should eq Time.new(
+          expect(subject.last_signed_in_at).to eq Time.new(
             0, time.month, time.day,
             time.hour, time.min, time.sec
           )
@@ -216,7 +216,7 @@ describe "attribute methods" do
         it "parses when hour is missing" do
           params["last_signed_in_at(4i)"] = ""
           subject.attributes = params
-          subject.last_signed_in_at.should eq Time.new(
+          expect(subject.last_signed_in_at).to eq Time.new(
             time.year, time.month, time.day,
             0, time.min, time.sec
           )
@@ -225,7 +225,7 @@ describe "attribute methods" do
         it "parses when seconds is missing" do
           params["last_signed_in_at(6i)"] = ""
           subject.attributes = params
-          subject.last_signed_in_at.should eq Time.new(
+          expect(subject.last_signed_in_at).to eq Time.new(
             time.year, time.month, time.day,
             time.hour, time.min, 0
           )
@@ -239,20 +239,20 @@ describe "attribute methods" do
           params["last_signed_in_at(5i)"] = ""
           params["last_signed_in_at(6i)"] = ""
           subject.attributes = params
-          subject.last_signed_in_at.should eq nil
+          expect(subject.last_signed_in_at).to eq nil
         end
 
         it "sets to nil if any of the values are on wrong format" do
           params["last_signed_in_at(3i)"] = "foobar"
           subject.attributes = params
-          subject.last_signed_in_at.should be_nil
+          expect(subject.last_signed_in_at).to be_nil
         end
 
         it "ignores the overflow of arguments" do
           params["last_signed_in_at(7i)"] = "1"
           params["last_signed_in_at(8i)"] = "2"
           subject.attributes = params
-          subject.last_signed_in_at.should eq time
+          expect(subject.last_signed_in_at).to eq time
         end
       end
     end

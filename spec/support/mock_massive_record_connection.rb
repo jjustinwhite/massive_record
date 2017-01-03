@@ -19,17 +19,17 @@ module MockMassiveRecordConnection
       MassiveRecord::ORM::Base.connection_configuration = {:host => "foo", :port => 9001}
 
       # Setting up a mock connection when asked for new
-      mock_connection = mock(MassiveRecord::Wrapper::Connection,
+      mock_connection = double(MassiveRecord::Wrapper::Connection,
         :open => true,
         :tables => MassiveRecord::ORM::Table.descendants.collect(&:table_name),
         :atomicIncrement => 1
       )
-      MassiveRecord::Wrapper::Connection.stub(:new).and_return(mock_connection)
+      allow(MassiveRecord::Wrapper::Connection).to receive(:new).and_return(mock_connection)
 
       # Inject find method on tables so that we don't need to go through with
       # the actual call to the database.
       new_table_method = MassiveRecord::Wrapper::Table.method(:new)
-      MassiveRecord::Wrapper::Table.stub!(:new) do |*args|
+      allow(MassiveRecord::Wrapper::Table).to receive(:new) do |*args|
         table = new_table_method.call(*args)
         # Defines a dummy find method which simply returns a hash where id is set to the first
         # argument (Like Person.find(1)).
@@ -63,7 +63,7 @@ module MockMassiveRecordConnection
       # The following is needed to make all WRITE to the DB to go through
       #
       new_row_method = MassiveRecord::Wrapper::Row.method(:new)
-      MassiveRecord::Wrapper::Row.stub!(:new) do |*args|
+      allow(MassiveRecord::Wrapper::Row).to receive(:new) do |*args|
         row = new_row_method.call(*args)
 
         def row.save

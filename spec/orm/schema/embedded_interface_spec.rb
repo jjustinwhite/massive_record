@@ -10,11 +10,11 @@ describe MassiveRecord::ORM::Schema::EmbeddedInterface do
   end
 
   it "should respond_to default_attributes_from_schema" do
-    TestEmbeddedInterface.should respond_to :default_attributes_from_schema
+    expect(TestEmbeddedInterface).to respond_to :default_attributes_from_schema
   end
 
   it "should have fields set to nil if no fields are defined" do
-    TestEmbeddedInterface.fields.should be_nil
+    expect(TestEmbeddedInterface.fields).to be_nil
   end
 
   it "should have one field if one field is added" do
@@ -22,17 +22,17 @@ describe MassiveRecord::ORM::Schema::EmbeddedInterface do
       field :field_name, :string
     end
 
-    TestEmbeddedInterface.should have(1).fields
-    TestEmbeddedInterface.fields.first.name.should == "field_name"
+    expect(TestEmbeddedInterface.fields.size).to eq(1)
+    expect(TestEmbeddedInterface.fields.first.name).to eq("field_name")
   end
 
   it "should not be possible to have to fields with the same name" do
-    lambda {
+    expect {
       class TestEmbeddedInterface
         field :will_raise_error
         field :will_raise_error
       end
-    }.should raise_error MassiveRecord::ORM::Schema::InvalidField
+    }.to raise_error MassiveRecord::ORM::Schema::InvalidField
   end
 
   it "should return attributes schema based on DSL" do
@@ -41,9 +41,9 @@ describe MassiveRecord::ORM::Schema::EmbeddedInterface do
       field :age, :integer, :default => 1
     end
 
-    TestEmbeddedInterface.attributes_schema["name"].type.should == :string
-    TestEmbeddedInterface.attributes_schema["age"].type.should == :integer
-    TestEmbeddedInterface.attributes_schema["age"].default.should == 1
+    expect(TestEmbeddedInterface.attributes_schema["name"].type).to eq(:string)
+    expect(TestEmbeddedInterface.attributes_schema["age"].type).to eq(:integer)
+    expect(TestEmbeddedInterface.attributes_schema["age"].default).to eq(1)
   end
 
   it "should make attributes_schema readable from instances" do
@@ -51,7 +51,7 @@ describe MassiveRecord::ORM::Schema::EmbeddedInterface do
       field :name
     end
 
-    TestEmbeddedInterface.new.attributes_schema["name"].type.should == :string
+    expect(TestEmbeddedInterface.new.attributes_schema["name"].type).to eq(:string)
   end
 
   it "should have a list of known attribute names" do
@@ -60,8 +60,8 @@ describe MassiveRecord::ORM::Schema::EmbeddedInterface do
       field :age, :integer
     end
 
-    TestEmbeddedInterface.should have(2).known_attribute_names
-    TestEmbeddedInterface.known_attribute_names.should include("name", "age")
+    expect(TestEmbeddedInterface.known_attribute_names.size).to eq(2)
+    expect(TestEmbeddedInterface.known_attribute_names).to include("name", "age")
   end
 
   it "should make known_attribute_names readable for instances" do
@@ -69,7 +69,7 @@ describe MassiveRecord::ORM::Schema::EmbeddedInterface do
       field :name, :string
     end
 
-    TestEmbeddedInterface.new.known_attribute_names.should include('name')
+    expect(TestEmbeddedInterface.new.known_attribute_names).to include('name')
   end
 
 
@@ -80,8 +80,8 @@ describe MassiveRecord::ORM::Schema::EmbeddedInterface do
     end
 
     defaults = TestEmbeddedInterface.default_attributes_from_schema
-    defaults["name"].should be_nil
-    defaults["age"].should == 1
+    expect(defaults["name"]).to be_nil
+    expect(defaults["age"]).to eq(1)
   end
 
   describe "timestamps" do
@@ -92,7 +92,7 @@ describe MassiveRecord::ORM::Schema::EmbeddedInterface do
     end
 
     it "should have a created_at time field" do
-      TestEmbeddedInterface.attributes_schema['created_at'].type.should == :time
+      expect(TestEmbeddedInterface.attributes_schema['created_at'].type).to eq(:time)
     end
   end
 
@@ -101,35 +101,35 @@ describe MassiveRecord::ORM::Schema::EmbeddedInterface do
     it "should be possible to dynamically add a field" do
       TestEmbeddedInterface.add_field :name, :default => "NA"
 
-      TestEmbeddedInterface.should have(1).fields
+      expect(TestEmbeddedInterface.fields.size).to eq(1)
 
       field = TestEmbeddedInterface.fields.first
 
-      field.name.should == "name"
-      field.default.should == "NA"
+      expect(field.name).to eq("name")
+      expect(field.default).to eq("NA")
     end
 
     it "should be possible to set field's type just like the DSL" do
       TestEmbeddedInterface.add_field :age, :integer, :default => 0
 
-      TestEmbeddedInterface.fields.first.name.should == "age"
-      TestEmbeddedInterface.fields.first.type.should == :integer
-      TestEmbeddedInterface.fields.first.default.should == 0
+      expect(TestEmbeddedInterface.fields.first.name).to eq("age")
+      expect(TestEmbeddedInterface.fields.first.type).to eq(:integer)
+      expect(TestEmbeddedInterface.fields.first.default).to eq(0)
     end
 
     it "should call class' undefine_attribute_methods to make sure it regenerates for newly added" do
-      TestEmbeddedInterface.should_receive(:undefine_attribute_methods)
+      expect(TestEmbeddedInterface).to receive(:undefine_attribute_methods)
       TestEmbeddedInterface.add_field :name, :default => "NA"
     end
 
     it "should return the new field" do
       field = TestEmbeddedInterface.add_field :age, :integer, :default => 0
-      field.should == TestEmbeddedInterface.fields.first
+      expect(field).to eq(TestEmbeddedInterface.fields.first)
     end
 
     it "should insert the new field's default value right away" do
       test_interface = TestEmbeddedInterface.new
-      test_interface.should_receive("age=").with(1)
+      expect(test_interface).to receive("age=").with(1)
       test_interface.add_field :age, :integer, :default => 1
     end
   end
@@ -138,7 +138,7 @@ describe MassiveRecord::ORM::Schema::EmbeddedInterface do
     subject { Address.new("id", :street => "Asker", :number => 2, :nice_place => true, :zip => '1384') }
 
     it "returns hash with correct key-value pairs" do
-      subject.attributes_db_raw_data_hash.should eq({
+      expect(subject.attributes_db_raw_data_hash).to eq({
         "street" => "Asker",
         "number" => 2,
         "nice_place" => "true",
@@ -160,12 +160,12 @@ describe MassiveRecord::ORM::Schema::EmbeddedInterface do
 
     it "returns attributes" do
       attributes, raw = Address.transpose_raw_data_to_record_attributes_and_raw_data id, raw_data
-      attributes.should eq({:id=>"id", "street"=>"Oslo", "number"=>3, "nice_place"=>false, "zip"=>"1111", "updated_at" => nil})
+      expect(attributes).to eq({:id=>"id", "street"=>"Oslo", "number"=>3, "nice_place"=>false, "zip"=>"1111", "updated_at" => nil})
     end
 
     it "returns raw data" do
       attributes, raw = Address.transpose_raw_data_to_record_attributes_and_raw_data id, raw_data
-      raw.should eq Hash[raw_data.value.collect do |attr, value|
+      expect(raw).to eq Hash[raw_data.value.collect do |attr, value|
         [attr, MassiveRecord::ORM::RawData.new(value: value, created_at: raw_data.created_at)]
       end]
     end
@@ -175,7 +175,7 @@ describe MassiveRecord::ORM::Schema::EmbeddedInterface do
         id,
         MassiveRecord::ORM::RawData.new(value: MassiveRecord::ORM::Base.coder.dump(raw_data.value))
       )
-      attributes.should eq({:id=>"id", "street"=>"Oslo", "number"=>3, "nice_place"=>false, "zip"=>"1111", "updated_at" => nil})
+      expect(attributes).to eq({:id=>"id", "street"=>"Oslo", "number"=>3, "nice_place"=>false, "zip"=>"1111", "updated_at" => nil})
     end
   end
 end

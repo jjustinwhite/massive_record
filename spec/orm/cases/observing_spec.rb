@@ -39,7 +39,7 @@ describe "Observers" do
       person_1 = Person.create! name: "Thorbjorn Hermansen", age: 30 
       person_2 = Person.create! name: "Thorbjorn Hermansen", age: 30 
       
-      subject.calls_to_after_create.should eq [person_1, person_2]
+      expect(subject.calls_to_after_create).to eq [person_1, person_2]
     end
   end
 
@@ -55,7 +55,7 @@ describe "Observers" do
       changes = test.changes
       test.save!
 
-      subject.changes_log.should eq [changes]
+      expect(subject.changes_log).to eq [changes]
     end
   end
 end

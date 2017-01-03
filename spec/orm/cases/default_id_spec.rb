@@ -7,29 +7,36 @@ describe ModelWithoutDefaultId do
   #include SetTableNamesToTestTable
 
   context "with auto increment id" do
-    its(:id) { be_nil }
-    its(:set_id_from_factory_before_create) { be_true }
+    describe '#id' do
+      subject { super().id }
+      it { be_nil }
+    end
+
+    describe '#set_id_from_factory_before_create' do
+      subject { super().set_id_from_factory_before_create }
+      it { be_true }
+    end
 
     it "sets id to what next_id returns" do
-      MassiveRecord::ORM::IdFactory::AtomicIncrementation.should_receive(:next_for).and_return 1
+      expect(MassiveRecord::ORM::IdFactory::AtomicIncrementation).to receive(:next_for).and_return 1
       subject.save
-      subject.id.should eq "1"
+      expect(subject.id).to eq "1"
     end
 
     it "does nothing if the id is set before create" do
       subject.id = 2
-      MassiveRecord::ORM::IdFactory::AtomicIncrementation.should_not_receive(:next_for)
+      expect(MassiveRecord::ORM::IdFactory::AtomicIncrementation).not_to receive(:next_for)
       subject.save
-      subject.id.should eq "2"
+      expect(subject.id).to eq "2"
     end
 
     it "is configurable which factory to use" do
       id_factory_was = ModelWithoutDefaultId.id_factory
       ModelWithoutDefaultId.id_factory = MassiveRecord::ORM::IdFactory::Timestamp
 
-      MassiveRecord::ORM::IdFactory::Timestamp.should_receive(:next_for).and_return 123
+      expect(MassiveRecord::ORM::IdFactory::Timestamp).to receive(:next_for).and_return 123
       subject.save
-      subject.id.should eq "123"
+      expect(subject.id).to eq "123"
 
       ModelWithoutDefaultId.id_factory = MassiveRecord::ORM::IdFactory::AtomicIncrementation
     end
@@ -39,8 +46,15 @@ describe ModelWithoutDefaultId do
     before(:all) { subject.class.set_id_from_factory_before_create = false }
     after(:all) { subject.class.set_id_from_factory_before_create = true }
 
-    its(:id) { be_nil }
-    its(:set_id_from_factory_before_create) { be_false }
+    describe '#id' do
+      subject { super().id }
+      it { be_nil }
+    end
+
+    describe '#set_id_from_factory_before_create' do
+      subject { super().set_id_from_factory_before_create }
+      it { be_false }
+    end
 
     it "raises error as expected when id is missing" do
       expect { subject.save }.to raise_error MassiveRecord::ORM::IdMissing
@@ -48,10 +62,10 @@ describe ModelWithoutDefaultId do
   end
 
   it "is AtomicIncrementation on ORM::Table" do
-    Person.id_factory.instance.should be_instance_of MassiveRecord::ORM::IdFactory::AtomicIncrementation
+    expect(Person.id_factory.instance).to be_instance_of MassiveRecord::ORM::IdFactory::AtomicIncrementation
   end
 
   it "is Timestamp on ORM::Embedded" do
-    Address.id_factory.instance.should be_instance_of MassiveRecord::ORM::IdFactory::Timestamp
+    expect(Address.id_factory.instance).to be_instance_of MassiveRecord::ORM::IdFactory::Timestamp
   end
 end

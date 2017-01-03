@@ -18,8 +18,16 @@ describe "mass assignment security" do
 
   describe "settings and defaults" do
     subject { Person }
-    its(:attributes_protected_by_default ) { should include 'id', Person.inheritance_attribute }
-    its(:protected_attributes) { should include 'id', Person.inheritance_attribute }
+
+    describe '#attributes_protected_by_default' do
+      subject { super().attributes_protected_by_default }
+      it { should include 'id', Person.inheritance_attribute }
+    end
+
+    describe '#protected_attributes' do
+      subject { super().protected_attributes }
+      it { should include 'id', Person.inheritance_attribute }
+    end
 
 
     describe "#attr_accessible" do
@@ -29,7 +37,7 @@ describe "mass assignment security" do
             attr_accessible :age
           end
 
-          Person.accessible_attributes.should include 'age'
+          expect(Person.accessible_attributes).to include 'age'
         end
       end
     end
@@ -41,7 +49,7 @@ describe "mass assignment security" do
             attr_protected :age
           end
 
-          Person.protected_attributes.should include 'age'
+          expect(Person.protected_attributes).to include 'age'
         end
       end
     end
@@ -56,7 +64,7 @@ describe "mass assignment security" do
               attr_accessible :age
             end
 
-            Person.new(:age => 33).age.should eq 33
+            expect(Person.new(:age => 33).age).to eq 33
           end
         end
 
@@ -66,7 +74,7 @@ describe "mass assignment security" do
               attr_accessible :age
             end
 
-            Person.new(:name => 'Thorbjorn').name.should be_nil
+            expect(Person.new(:name => 'Thorbjorn').name).to be_nil
           end
         end
       end
@@ -78,7 +86,7 @@ describe "mass assignment security" do
               attr_protected :age
             end
 
-            Person.new(:age => 33).age.should be_nil
+            expect(Person.new(:age => 33).age).to be_nil
           end
         end
 
@@ -88,7 +96,7 @@ describe "mass assignment security" do
               attr_protected :age
             end
 
-            Person.new(:name => 'Thorbjorn').name.should eq "Thorbjorn"
+            expect(Person.new(:name => 'Thorbjorn').name).to eq "Thorbjorn"
           end
         end
       end

@@ -20,12 +20,12 @@ module MassiveRecord::ORM::IdentityMap
       }
       mw.call({})
 
-      called.should be_true
+      expect(called).to be_true
     end
 
     it "is enabled during delegation" do
       mw = Middleware.new lambda { |env|
-        MassiveRecord::ORM::IdentityMap.should be_enabled
+        expect(MassiveRecord::ORM::IdentityMap).to be_enabled
       }
       mw.call({})
     end
@@ -41,21 +41,21 @@ module MassiveRecord::ORM::IdentityMap
     it "is enabled during body each" do
       mw = Middleware.new lambda { |env|
         [200, {}, Enum.new(lambda { |&b|
-          MassiveRecord::ORM::IdentityMap.should be_enabled
+          expect(MassiveRecord::ORM::IdentityMap).to be_enabled
           b.call "hello"
         })]
       }
 
       body = mw.call({}).last
-      body.each { |x| x.should eq "hello" }
+      body.each { |x| expect(x).to eq "hello" }
     end
 
     it "disables after close" do
       mw = Middleware.new lambda { |env| [200, {}, []] }
       body = mw.call({}).last
-      MassiveRecord::ORM::IdentityMap.should be_enabled
+      expect(MassiveRecord::ORM::IdentityMap).to be_enabled
       body.close
-      MassiveRecord::ORM::IdentityMap.should_not be_enabled
+      expect(MassiveRecord::ORM::IdentityMap).not_to be_enabled
     end
 
     it "is cleared after close" do
@@ -64,10 +64,10 @@ module MassiveRecord::ORM::IdentityMap
 
 
       MassiveRecord::ORM::IdentityMap.send(:repository)['class'] = 'record'
-      MassiveRecord::ORM::IdentityMap.send(:repository).should_not be_empty
+      expect(MassiveRecord::ORM::IdentityMap.send(:repository)).not_to be_empty
       
       body.close
-      MassiveRecord::ORM::IdentityMap.send(:repository).should be_empty
+      expect(MassiveRecord::ORM::IdentityMap.send(:repository)).to be_empty
     end
   end
 end

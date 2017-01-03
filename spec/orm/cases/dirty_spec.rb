@@ -10,11 +10,11 @@ describe "dirty" do
       let(:address) { Address.new("id1", :street => "foo") }
 
       it "is not changed when first created" do
-        Person.new.should_not be_changed
+        expect(Person.new).not_to be_changed
       end
 
       it "initial values are changed" do
-        subject.should be_email_changed
+        expect(subject).to be_email_changed
       end
 
 
@@ -26,13 +26,13 @@ describe "dirty" do
         end
 
         it "includes addresses in changed" do
-          subject.changed.should include "addresses"
+          expect(subject.changed).to include "addresses"
         end
 
         it "includes knowledge of changes" do
           address.street = address.street + "_NEW"
           subject.name = subject.name + "_NEW"
-          subject.changes.should eq({
+          expect(subject.changes).to eq({
             "name" => [nil, "Alice_NEW"],
             "age" => [nil, 20],
             "email" => [nil, "foo@bar.com"],
@@ -68,7 +68,7 @@ describe "dirty" do
         in_time_zone "utc" do
           test = TestClass.new
           test.tested_at = Time.now
-          test.should be_tested_at_changed
+          expect(test).to be_tested_at_changed
         end
       end
 
@@ -102,12 +102,12 @@ describe "dirty" do
         original_name = subject.name
         subject.name = "Bob"
         subject.name = "Foo"
-        subject.name_was.should == original_name
+        expect(subject.name_was).to eq(original_name)
       end
 
       it "should return what name was" do
         subject.name = "Bob"
-        subject.name_was.should == "Alice"
+        expect(subject.name_was).to eq("Alice")
       end
 
 
@@ -119,7 +119,7 @@ describe "dirty" do
         end
 
         it "on save, but don't do it if save fails validation" do
-          subject.should_receive(:valid?).and_return(false)
+          expect(subject).to receive(:valid?).and_return(false)
           subject.name = "Bob"
           subject.save
           should be_changed
@@ -141,7 +141,7 @@ describe "dirty" do
       describe "previous changes" do
         it "should be blank before after reload" do
           subject.reload
-          subject.previous_changes.should be_blank
+          expect(subject.previous_changes).to be_blank
         end
 
         it "should equal to changes before save" do
@@ -150,8 +150,8 @@ describe "dirty" do
 
           subject.save
 
-          subject.changes.should be_empty
-          subject.previous_changes.should == changes_before_save
+          expect(subject.changes).to be_empty
+          expect(subject.previous_changes).to eq(changes_before_save)
         end
 
         it "should equal to changes before save!" do
@@ -160,15 +160,15 @@ describe "dirty" do
 
           subject.save!
 
-          subject.changes.should be_empty
-          subject.previous_changes.should == changes_before_save
+          expect(subject.changes).to be_empty
+          expect(subject.previous_changes).to eq(changes_before_save)
         end
 
         it "should be nil after a reload" do
           subject.name = "Bob"
           subject.save
           subject.reload
-          subject.previous_changes.should be_blank
+          expect(subject.previous_changes).to be_blank
         end
       end
     end
@@ -195,7 +195,7 @@ describe "dirty" do
       subject.dictionary = {}
       subject.save! :validate => false
       subject.reload
-      subject.dictionary.should == {}
+      expect(subject.dictionary).to eq({})
     end
   end
 end

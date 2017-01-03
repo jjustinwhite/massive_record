@@ -9,7 +9,7 @@ describe "auto setting of ids" do
   end
 
   it "should return nil as default if no default_id is defined" do
-    @person.id.should be_nil
+    expect(@person.id).to be_nil
   end
 
   it "should have id based on whatever default_id defines" do
@@ -19,7 +19,7 @@ describe "auto setting of ids" do
       end
     end
 
-    @person.id.should == "thorbjorn-29"
+    expect(@person.id).to eq("thorbjorn-29")
 
     Person.class_eval { undef_method :default_id }
   end
@@ -32,7 +32,7 @@ describe "auto setting of ids" do
       end
     end
 
-    @person.id.should == "thorbjorn-29"
+    expect(@person.id).to eq("thorbjorn-29")
 
     Person.class_eval { undef_method :default_id }
   end
@@ -45,8 +45,8 @@ describe "auto setting of ids" do
         end
       end
 
-      MassiveRecord::ORM::IdFactory::AtomicIncrementation.should_receive(:next_for).with(Person).and_return(1)
-      @person.id.should == "1"
+      expect(MassiveRecord::ORM::IdFactory::AtomicIncrementation).to receive(:next_for).with(Person).and_return(1)
+      expect(@person.id).to eq("1")
 
       Person.class_eval { undef_method :default_id }
     end

@@ -27,12 +27,12 @@ describe MassiveRecord::ORM::Persistence::Operations::Embedded::Destroy do
       before { record.person = nil }
 
       it "returns true" do
-        subject.execute.should eq true
+        expect(subject.execute).to eq true
       end
 
       it "does not call destroy" do
         subject.execute
-        subject.should_not_receive(:update_embedded)
+        expect(subject).not_to receive(:update_embedded)
       end
     end
 
@@ -41,12 +41,12 @@ describe MassiveRecord::ORM::Persistence::Operations::Embedded::Destroy do
         before { record.person = person }
 
         it "returns true" do
-          subject.execute.should eq true
+          expect(subject.execute).to eq true
         end
 
         it "does not call destroy" do
           subject.execute
-          subject.should_not_receive(:update_embedded)
+          expect(subject).not_to receive(:update_embedded)
         end
       end
 
@@ -58,12 +58,12 @@ describe MassiveRecord::ORM::Persistence::Operations::Embedded::Destroy do
         
         it "removes record from collection owher" do
           subject.execute
-          person.addresses.should be_empty
+          expect(person.addresses).to be_empty
         end
 
         it "persists the removal of record from collection owner" do
           subject.execute
-          person.reload.addresses.should be_empty
+          expect(person.reload.addresses).to be_empty
         end
       end
     end

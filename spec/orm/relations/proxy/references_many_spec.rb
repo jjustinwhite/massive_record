@@ -22,14 +22,14 @@ describe TestReferencesManyProxy do
     describe "with foreig keys stored in proxy_owner" do
       it "should not try to find proxy_target if foreign_keys is blank" do
         proxy_owner.test_class_ids.clear
-        TestClass.should_not_receive(:find)
-        subject.load_proxy_target.should be_empty
+        expect(TestClass).not_to receive(:find)
+        expect(subject.load_proxy_target).to be_empty
       end
 
       it "should try to load proxy_target if foreign_keys has any keys" do
         proxy_owner.test_class_ids << proxy_target.id
-        TestClass.should_receive(:find).with([proxy_target.id], anything).and_return([proxy_target])
-        subject.load_proxy_target.should == [proxy_target]
+        expect(TestClass).to receive(:find).with([proxy_target.id], anything).and_return([proxy_target])
+        expect(subject.load_proxy_target).to eq([proxy_target])
       end
 
       it "should not die when loading foreign keys which does not exist in proxy_target table" do
@@ -38,7 +38,7 @@ describe TestReferencesManyProxy do
         proxy_owner.test_classes.reset
         proxy_owner.test_class_ids << "does_not_exists"
         proxy_owner.test_classes.reload
-        proxy_owner.test_classes.length.should == 1
+        expect(proxy_owner.test_classes.length).to eq(1)
       end
     end
 
@@ -57,17 +57,17 @@ describe TestReferencesManyProxy do
       end
 
       it "should not try to find proxy_target if start from method is blank" do
-        proxy_owner.should_receive(:friends_records_starts_from_id).and_return(nil)
-        Person.should_not_receive(:all)
-        subject.load_proxy_target.should be_empty
+        expect(proxy_owner).to receive(:friends_records_starts_from_id).and_return(nil)
+        expect(Person).not_to receive(:all)
+        expect(subject.load_proxy_target).to be_empty
       end
 
       it "should find all friends when loading" do
         friends = subject.load_proxy_target
-        friends.length.should == 2
-        friends.should include(proxy_target)
-        friends.should include(proxy_target_2)
-        friends.should_not include(not_proxy_target)
+        expect(friends.length).to eq(2)
+        expect(friends).to include(proxy_target)
+        expect(friends).to include(proxy_target_2)
+        expect(friends).not_to include(not_proxy_target)
       end
     end
   end
@@ -89,18 +89,18 @@ describe TestReferencesManyProxy do
     end
 
     it "should load by given proc" do
-      TestClass.should_receive(:find).with("testing-123").and_return([test_class])
-      subject.load_proxy_target.should == [test_class]
+      expect(TestClass).to receive(:find).with("testing-123").and_return([test_class])
+      expect(subject.load_proxy_target).to eq([test_class])
     end
 
     it "should always wrap the proc's result in an array" do
-      TestClass.should_receive(:find).with("testing-123").and_return(test_class)
-      subject.load_proxy_target.should == [test_class]
+      expect(TestClass).to receive(:find).with("testing-123").and_return(test_class)
+      expect(subject.load_proxy_target).to eq([test_class])
     end
 
     it "should be empty if the proc return nil" do
-      TestClass.should_receive(:find).with("testing-123").and_return(nil)
-      subject.load_proxy_target.should be_empty
+      expect(TestClass).to receive(:find).with("testing-123").and_return(nil)
+      expect(subject.load_proxy_target).to be_empty
     end
   end
 
@@ -119,7 +119,7 @@ describe TestReferencesManyProxy do
           result << records_batch 
         end
 
-        result.should eq [[proxy_target], [proxy_target_2], [proxy_target_3]]
+        expect(result).to eq [[proxy_target], [proxy_target_2], [proxy_target_3]]
       end
 
       it "filters when given :starts_with" do
@@ -132,7 +132,7 @@ describe TestReferencesManyProxy do
           result << records_batch 
         end
 
-        result.should eq [[proxy_target_3], [proxy_target_3_3]]
+        expect(result).to eq [[proxy_target_3], [proxy_target_3_3]]
       end
     end
 
@@ -150,7 +150,7 @@ describe TestReferencesManyProxy do
           result << records_batch 
         end
 
-        result.should eq [[proxy_target], [proxy_target_2], [proxy_target_3]]
+        expect(result).to eq [[proxy_target], [proxy_target_2], [proxy_target_3]]
       end
 
       it "filters when given :starts_with" do
@@ -164,7 +164,7 @@ describe TestReferencesManyProxy do
           result << records_batch 
         end
 
-        result.should eq [[proxy_target_3], [proxy_target_3_3]]
+        expect(result).to eq [[proxy_target_3], [proxy_target_3_3]]
       end
 
       it "does not alter foreign keys in proxy owner" do
@@ -173,7 +173,7 @@ describe TestReferencesManyProxy do
         subject.find_in_batches(:batch_size => 1, :starts_with => "test-class-id-3") do |records_batch|
         end
 
-        proxy_owner.test_class_ids.should eq foreign_keys_before_batches
+        expect(proxy_owner.test_class_ids).to eq foreign_keys_before_batches
       end
     end
 
@@ -188,7 +188,7 @@ describe TestReferencesManyProxy do
         records # touch to save
 
         subject.metadata.records_starts_from = :test_classes_starts_from
-        subject.proxy_owner.should_receive(:test_classes_starts_from).and_return("test-")
+        expect(subject.proxy_owner).to receive(:test_classes_starts_from).and_return("test-")
       end
 
       after { subject.metadata.records_starts_from = nil }
@@ -201,7 +201,7 @@ describe TestReferencesManyProxy do
           result << records_batch
         end
 
-        result.should eq [records]
+        expect(result).to eq [records]
       end
 
       it "returns records in one batch" do
@@ -211,7 +211,7 @@ describe TestReferencesManyProxy do
           result << records_batch
         end
 
-        result.should eq [records.slice(0, 3), records.slice(3, 3)]
+        expect(result).to eq [records.slice(0, 3), records.slice(3, 3)]
       end
 
       describe "an overridden start id" do
@@ -230,7 +230,7 @@ describe TestReferencesManyProxy do
             result << records_batch
           end
 
-          result.should eq [records_above_10.slice(0, 3), records_above_10.slice(3, 3)]
+          expect(result).to eq [records_above_10.slice(0, 3), records_above_10.slice(3, 3)]
         end
 
         it "raises an error if your start option starst with some incorrect value" do
@@ -245,7 +245,7 @@ describe TestReferencesManyProxy do
 
   describe "#find_each" do
     it "delegate to find_in_batches" do
-      subject.should_receive(:find_in_batches).with(:batch_size => 2, :starts_with => :from_here)
+      expect(subject).to receive(:find_in_batches).with(:batch_size => 2, :starts_with => :from_here)
       subject.find_each(:batch_size => 2, :starts_with => :from_here)  
     end
 
@@ -259,7 +259,7 @@ describe TestReferencesManyProxy do
         result << record
       end
 
-      result.should eq [proxy_target, proxy_target_2, proxy_target_3]
+      expect(result).to eq [proxy_target, proxy_target_2, proxy_target_3]
     end
   end
 
@@ -269,94 +269,94 @@ describe TestReferencesManyProxy do
       describe "by ##{add_method}" do
         it "should include the proxy_target in the proxy" do
           subject.send(add_method, proxy_target)
-          subject.proxy_target.should include proxy_target
+          expect(subject.proxy_target).to include proxy_target
         end
 
         it "should not add invalid objects to collection" do
-          proxy_target.should_receive(:valid?).and_return false
-          subject.send(add_method, proxy_target).should be_false
-          subject.proxy_target.should_not include proxy_target
+          expect(proxy_target).to receive(:valid?).and_return false
+          expect(subject.send(add_method, proxy_target)).to be_false
+          expect(subject.proxy_target).not_to include proxy_target
         end
 
         it "should update array of foreign keys in proxy_owner" do
-          proxy_owner.test_class_ids.should be_empty
+          expect(proxy_owner.test_class_ids).to be_empty
           subject.send(add_method, proxy_target)
-          proxy_owner.test_class_ids.should include(proxy_target.id)
+          expect(proxy_owner.test_class_ids).to include(proxy_target.id)
         end
 
         it "should auto-persist foreign keys if owner has been persisted" do
           proxy_owner.save!
           subject.send(add_method, proxy_target)
           proxy_owner.reload
-          proxy_owner.test_class_ids.should include(proxy_target.id)
+          expect(proxy_owner.test_class_ids).to include(proxy_target.id)
         end
 
         it "should not persist proxy owner (and it's foreign keys) if owner is a new record" do
           subject.send(add_method, proxy_target)
-          proxy_owner.should be_new_record
+          expect(proxy_owner).to be_new_record
         end
 
         it "should not update array of foreign keys in proxy_owner if it does not respond to it" do
-          proxy_owner.should_receive(:respond_to?).and_return(false)
+          expect(proxy_owner).to receive(:respond_to?).and_return(false)
           subject.send(add_method, proxy_target)
-          proxy_owner.test_class_ids.should_not include(proxy_target.id)
+          expect(proxy_owner.test_class_ids).not_to include(proxy_target.id)
         end
 
         it "should not update array of foreign keys in the proxy owner if it has been destroyed" do
-          proxy_owner.should_receive(:destroyed?).and_return true
+          expect(proxy_owner).to receive(:destroyed?).and_return true
           subject.send(add_method, proxy_target)
-          proxy_owner.test_class_ids.should_not include(proxy_target.id)
+          expect(proxy_owner.test_class_ids).not_to include(proxy_target.id)
         end
 
         it "should not do anything adding the same record twice" do
           2.times { subject.send(add_method, proxy_target) }
-          subject.proxy_target.length.should == 1
-          proxy_owner.test_class_ids.length.should == 1
+          expect(subject.proxy_target.length).to eq(1)
+          expect(proxy_owner.test_class_ids.length).to eq(1)
         end
 
         it "should be able to add two records at the same time" do
           subject.send add_method, [proxy_target, proxy_target_2]
-          subject.proxy_target.should include proxy_target
-          subject.proxy_target.should include proxy_target_2
+          expect(subject.proxy_target).to include proxy_target
+          expect(subject.proxy_target).to include proxy_target_2
         end
 
         it "should return proxy so calls can be chained" do
-          subject.send(add_method, proxy_target).object_id.should == subject.object_id
+          expect(subject.send(add_method, proxy_target).object_id).to eq(subject.object_id)
         end
 
         it "should raise an error if there is a type mismatch" do
-          lambda { subject.send add_method, Person.new(:name => "Foo", :age => 2) }.should raise_error MassiveRecord::ORM::RelationTypeMismatch
+          expect { subject.send add_method, Person.new(:name => "Foo", :age => 2) }.to raise_error MassiveRecord::ORM::RelationTypeMismatch
         end
 
         it "should not save the pushed proxy_target if proxy_owner is not persisted" do
-          proxy_owner.should_receive(:persisted?).and_return false
-          proxy_target.should_not_receive(:save)
+          expect(proxy_owner).to receive(:persisted?).and_return false
+          expect(proxy_target).not_to receive(:save)
           subject.send(add_method, proxy_target)
         end
 
         it "should not save the proxy_owner object if it has not been persisted before" do
-          proxy_owner.should_receive(:persisted?).and_return false
-          proxy_owner.should_not_receive(:save)
+          expect(proxy_owner).to receive(:persisted?).and_return false
+          expect(proxy_owner).not_to receive(:save)
           subject.send(add_method, proxy_target)
         end
 
         it "should save the pushed proxy_target if proxy_owner is persisted" do
           proxy_owner.save!
-          proxy_target.should_receive(:save).and_return(true)
+          expect(proxy_target).to receive(:save).and_return(true)
           subject.send(add_method, proxy_target)
         end
 
         it "should not save anything if one record is invalid" do
           proxy_owner.save!
 
-          proxy_target.should_receive(:valid?).and_return(true)
-          proxy_target_2.should_receive(:valid?).and_return(false)
+          expect(proxy_target).to receive(:valid?).and_return(true)
+          expect(proxy_target_2).to receive(:valid?).and_return(false)
           
-          proxy_target.should_not_receive(:save)
-          proxy_target_2.should_not_receive(:save)
-          proxy_owner.should_not_receive(:save)
+          expect(proxy_target).not_to receive(:save)
+          expect(proxy_target_2).not_to receive(:save)
+          expect(proxy_owner).not_to receive(:save)
 
-          subject.send(add_method, [proxy_target, proxy_target_2]).should be_false
+          expect(subject.send(add_method, [proxy_target, proxy_target_2])).to be_false
         end
       end
     end
@@ -371,29 +371,29 @@ describe TestReferencesManyProxy do
 
         it "should not be in proxy after being removed" do
           subject.send(delete_method, proxy_target)
-          subject.proxy_target.should_not include proxy_target
+          expect(subject.proxy_target).not_to include proxy_target
         end
 
         it "should remove the destroyed records id from proxy_owner foreign keys" do
           subject.send(delete_method, proxy_target)
-          proxy_owner.test_class_ids.should_not include(proxy_target.id)
+          expect(proxy_owner.test_class_ids).not_to include(proxy_target.id)
         end
 
         it "should not remove foreign keys in proxy_owner if it does not respond to it" do
-          proxy_owner.should_receive(:respond_to?).and_return false
+          expect(proxy_owner).to receive(:respond_to?).and_return false
           subject.send(delete_method, proxy_target)
-          proxy_owner.test_class_ids.should include(proxy_target.id)
+          expect(proxy_owner.test_class_ids).to include(proxy_target.id)
         end
 
         it "should not save the proxy_owner if it has not been persisted" do
-          proxy_owner.should_receive(:persisted?).and_return(false)
-          proxy_owner.should_not_receive(:save)
+          expect(proxy_owner).to receive(:persisted?).and_return(false)
+          expect(proxy_owner).not_to receive(:save)
           subject.send(delete_method, proxy_target)
         end
 
         it "should save the proxy_owner if it has been persisted" do
           proxy_owner.save!
-          proxy_owner.should_receive(:save)
+          expect(proxy_owner).to receive(:save)
           subject.send(delete_method, proxy_target)
         end
       end
@@ -405,7 +405,7 @@ describe TestReferencesManyProxy do
       end
 
       it "should ask the record to destroy self" do
-        proxy_target.should_receive(:destroy)
+        expect(proxy_target).to receive(:destroy)
         subject.destroy proxy_target
       end
     end
@@ -416,8 +416,8 @@ describe TestReferencesManyProxy do
       end
 
       it "should not ask the record to destroy self" do
-        proxy_target.should_not_receive(:destroy)
-        proxy_target.should_not_receive(:delete)
+        expect(proxy_target).not_to receive(:destroy)
+        expect(proxy_target).not_to receive(:delete)
         subject.delete(proxy_target)
       end
     end
@@ -432,16 +432,16 @@ describe TestReferencesManyProxy do
 
       it "should not include any records after destroying all" do
         subject.destroy_all
-        subject.proxy_target.should be_empty
+        expect(subject.proxy_target).to be_empty
       end
 
       it "should remove all foreign keys in proxy_owner" do
         subject.destroy_all
-        proxy_owner.test_class_ids.should be_empty
+        expect(proxy_owner.test_class_ids).to be_empty
       end
 
       it "should call reset after all destroyed" do
-        subject.should_receive(:reset)
+        expect(subject).to receive(:reset)
         subject.destroy_all
       end
 
@@ -451,14 +451,14 @@ describe TestReferencesManyProxy do
       end
 
       it "should call destroy on each record" do
-        proxy_target.should_receive(:destroy)
-        proxy_target_2.should_receive(:destroy)
+        expect(proxy_target).to receive(:destroy)
+        expect(proxy_target_2).to receive(:destroy)
         subject.destroy_all
       end
 
       it "returns destroyed records" do
         removed = subject.destroy_all
-        removed.should include proxy_target, proxy_target_2
+        expect(removed).to include proxy_target, proxy_target_2
       end
     end
 
@@ -470,16 +470,16 @@ describe TestReferencesManyProxy do
 
       it "should not include any records after destroying all" do
         subject.delete_all
-        subject.proxy_target.should be_empty
+        expect(subject.proxy_target).to be_empty
       end
 
       it "should remove all foreign keys in proxy_owner" do
         subject.delete_all
-        proxy_owner.test_class_ids.should be_empty
+        expect(proxy_owner.test_class_ids).to be_empty
       end
 
       it "should call reset after all destroyed" do
-        subject.should_receive(:reset)
+        expect(subject).to receive(:reset)
         subject.delete_all
       end
 
@@ -489,14 +489,14 @@ describe TestReferencesManyProxy do
       end
 
       it "should not call destroy on each record" do
-        proxy_target.should_not_receive(:destroy)
-        proxy_target_2.should_not_receive(:destroy)
+        expect(proxy_target).not_to receive(:destroy)
+        expect(proxy_target_2).not_to receive(:destroy)
         subject.delete_all
       end
 
       it "returns deleted records" do
         removed = subject.delete_all
-        removed.should include proxy_target, proxy_target_2
+        expect(removed).to include proxy_target, proxy_target_2
       end
     end
   end
@@ -512,34 +512,34 @@ describe TestReferencesManyProxy do
 
           it "should return the correct #{method} when loaded" do
             subject.reload if should_persist_proxy_owner
-            subject.send(method).should == 1
+            expect(subject.send(method)).to eq(1)
           end
 
           it "should return the correct #{method} when not loaded" do
             subject.reset if should_persist_proxy_owner
-            subject.send(method).should == 1
+            expect(subject.send(method)).to eq(1)
           end
 
           it "should return the correct #{method} when a record is added" do
             subject << proxy_target_2
-            subject.send(method).should == 2
+            expect(subject.send(method)).to eq(2)
           end
 
           it "should return the correct #{method} when a record is added to an unloaded proxy" do
             subject.reset if should_persist_proxy_owner
             subject << proxy_target_2
-            subject.send(method).should == 2
+            expect(subject.send(method)).to eq(2)
           end
 
           it "returns correct length if new proxy gets records added" do
             subject.destroy_all
             subject.reset
-            proxy_owner.stub(:persisted?).and_return false
-            proxy_owner.stub(:new_record?).and_return true
+            allow(proxy_owner).to receive(:persisted?).and_return false
+            allow(proxy_owner).to receive(:new_record?).and_return true
 
             new_proxy_target = proxy_target.class.new "id-1"
             subject << new_proxy_target
-            subject.length.should eq 1
+            expect(subject.length).to eq 1
           end
         end
       end
@@ -554,17 +554,17 @@ describe TestReferencesManyProxy do
           before { subject.reset }
 
           it "loads nothing" do
-            TestClass.should_not_receive(:find)
+            expect(TestClass).not_to receive(:find)
             subject.length
           end
 
           it "reads length from proxy owner's foreign keys list" do
-            proxy_owner.should_receive(:test_class_ids).and_return([proxy_target.id, proxy_target_2.id])
+            expect(proxy_owner).to receive(:test_class_ids).and_return([proxy_target.id, proxy_target_2.id])
             subject.length
           end
 
           it "returns correct length" do
-            subject.length.should eq 2
+            expect(subject.length).to eq 2
           end
         end
 
@@ -572,17 +572,17 @@ describe TestReferencesManyProxy do
           before { subject.reload }
 
           it "loads nothing" do
-            TestClass.should_not_receive(:find)
+            expect(TestClass).not_to receive(:find)
             subject.length
           end
 
           it "reads length from proxy_target" do
-            subject.should_receive(:proxy_target).and_return([proxy_target, proxy_target_2])
+            expect(subject).to receive(:proxy_target).and_return([proxy_target, proxy_target_2])
             subject.length
           end
 
           it "returns correct length" do
-            subject.length.should eq 2
+            expect(subject.length).to eq 2
           end
         end
       end
@@ -604,17 +604,17 @@ describe TestReferencesManyProxy do
           before { subject.reset }
 
           it "loads all the targets and returns it's length" do
-            subject.should_receive(:load_proxy_target).and_return [proxy_target, proxy_target_2] 
+            expect(subject).to receive(:load_proxy_target).and_return [proxy_target, proxy_target_2] 
             subject.length
           end
 
           it "returns correct length" do
-            subject.length.should eq 2
+            expect(subject.length).to eq 2
           end
 
           it "returns correct length after adding a record" do
             subject <<  Person.new(proxy_owner.id+"-friend-3", :name => "H", :age => 9)
-            subject.length.should eq 3
+            expect(subject.length).to eq 3
           end
         end
 
@@ -622,12 +622,12 @@ describe TestReferencesManyProxy do
           before { subject.reload }
 
           it "loads nothing" do
-            subject.should_not_receive(:load_proxy_target)
+            expect(subject).not_to receive(:load_proxy_target)
             subject.length
           end
 
           it "returns correct length" do
-            subject.length.should eq 2
+            expect(subject.length).to eq 2
           end
         end
       end
@@ -638,29 +638,29 @@ describe TestReferencesManyProxy do
     before { subject.reset }
 
     it "checks the length and return true if it is greater than 0" do
-      subject.should_receive(:length).and_return 1
-      subject.any?.should be_true
+      expect(subject).to receive(:length).and_return 1
+      expect(subject.any?).to be_true
     end
 
     it "checks the length and return false if it is 0" do
-      subject.should_receive(:length).and_return 0
-      subject.any?.should be_false
+      expect(subject).to receive(:length).and_return 0
+      expect(subject.any?).to be_false
     end
 
     context "when find with proc" do
       before do
-        subject.should_receive(:loaded?).and_return false
-        subject.should_receive(:find_with_proc?).and_return true
+        expect(subject).to receive(:loaded?).and_return false
+        expect(subject).to receive(:find_with_proc?).and_return true
       end
 
       it "asks for first and returns false if first is nil" do
-        subject.should_receive(:first).and_return nil
-        subject.any?.should be_false
+        expect(subject).to receive(:first).and_return nil
+        expect(subject.any?).to be_false
       end
 
       it "asks for first and returns true if first is a record" do
-        subject.should_receive(:first).and_return proxy_target
-        subject.any?.should be_true
+        expect(subject).to receive(:first).and_return proxy_target
+        expect(subject.any?).to be_true
       end
     end
   end
@@ -669,32 +669,32 @@ describe TestReferencesManyProxy do
     before { subject.reset }
 
     it "checks the length and return true if it is greater than 0" do
-      subject.should_receive(:length).and_return 1
-      subject.present?.should be_true
+      expect(subject).to receive(:length).and_return 1
+      expect(subject.present?).to be_true
     end
 
     it "checks the length and return false if it is 0" do
-      subject.should_receive(:length).and_return 0
-      subject.present?.should be_false
+      expect(subject).to receive(:length).and_return 0
+      expect(subject.present?).to be_false
     end
   end
 
   describe "#include?" do
     it "uses find as it's query method when loaded" do
-      subject.should_receive(:loaded?).and_return true
-      subject.should_receive(:find).with(proxy_target.id).and_return true
-      subject.should include proxy_target
+      expect(subject).to receive(:loaded?).and_return true
+      expect(subject).to receive(:find).with(proxy_target.id).and_return true
+      expect(subject).to include proxy_target
     end
 
     it "uses find as it's query method when find with proc" do
-      subject.should_receive(:find_with_proc?).and_return true
-      subject.should_receive(:find).with(proxy_target.id).and_return true
-      subject.should include proxy_target
+      expect(subject).to receive(:find_with_proc?).and_return true
+      expect(subject).to receive(:find).with(proxy_target.id).and_return true
+      expect(subject).to include proxy_target
     end
 
     it "can answer to ids as well" do
-      subject.should_receive(:foreign_key_in_proxy_owner_exists?).with(proxy_target.id).and_return true
-      subject.should include proxy_target.id
+      expect(subject).to receive(:foreign_key_in_proxy_owner_exists?).with(proxy_target.id).and_return true
+      expect(subject).to include proxy_target.id
     end
 
     it "does not load record if foreign keys are presisted in proxy owner" do
@@ -702,8 +702,8 @@ describe TestReferencesManyProxy do
       subject << proxy_target
       subject.reset
 
-      TestClass.should_not_receive(:find)
-      subject.should include proxy_target
+      expect(TestClass).not_to receive(:find)
+      expect(subject).to include proxy_target
     end
 
     [true, false].each do |should_persist_proxy_owner|
@@ -749,20 +749,20 @@ describe TestReferencesManyProxy do
 
       it "should return nil if no relations are found" do
         subject.destroy_all
-        subject.first.should be_nil
+        expect(subject.first).to be_nil
       end
 
       it "should return the first proxy_target" do
-        subject.first.should == proxy_target
+        expect(subject.first).to eq(proxy_target)
       end
 
       it "should not be loaded" do
         subject.first
-        subject.should_not be_loaded
+        expect(subject).not_to be_loaded
       end
 
       it "should just find the first foreign key" do
-        TestClass.should_receive(:find).with(proxy_target.id, anything).and_return(proxy_target)
+        expect(TestClass).to receive(:find).with(proxy_target.id, anything).and_return(proxy_target)
         subject.first
       end
     end
@@ -782,20 +782,20 @@ describe TestReferencesManyProxy do
 
       it "should return nil if no relations are found" do
         subject.destroy_all
-        subject.first.should be_nil
+        expect(subject.first).to be_nil
       end
 
       it "should return the first proxy_target" do
-        subject.first.should == proxy_target
+        expect(subject.first).to eq(proxy_target)
       end
 
       it "should not be loaded" do
         subject.first
-        subject.should_not be_loaded
+        expect(subject).not_to be_loaded
       end
 
       it "should find the first with a limit" do
-        Person.should_receive(:all).with(hash_including(:limit => 1))
+        expect(Person).to receive(:all).with(hash_including(:limit => 1))
         subject.first
       end
     end
@@ -815,22 +815,22 @@ describe TestReferencesManyProxy do
       end
 
       it "should find the object from database if id exists among foreig keys" do
-        subject.find(proxy_target.id).should == proxy_target
+        expect(subject.find(proxy_target.id)).to eq(proxy_target)
       end
 
       it "should raise error if record is not among records in association" do
-        lambda { subject.find(not_among_targets.id) }.should raise_error MassiveRecord::ORM::RecordNotFound
+        expect { subject.find(not_among_targets.id) }.to raise_error MassiveRecord::ORM::RecordNotFound
       end
 
       it "should not hit database if proxy has been loaded" do
         subject.load_proxy_target
-        TestClass.should_not_receive(:find)
-        subject.find(proxy_target.id).should == proxy_target
+        expect(TestClass).not_to receive(:find)
+        expect(subject.find(proxy_target.id)).to eq(proxy_target)
       end
 
       it "should raise error if proxy is loaded, but record is not found in association" do
         subject.load_proxy_target
-        lambda { subject.find(not_among_targets.id) }.should raise_error MassiveRecord::ORM::RecordNotFound
+        expect { subject.find(not_among_targets.id) }.to raise_error MassiveRecord::ORM::RecordNotFound
       end
     end
 
@@ -853,35 +853,35 @@ describe TestReferencesManyProxy do
 
 
       it "should find the object from database if id exists among foreig keys" do
-        subject.find(proxy_target.id).should == proxy_target
+        expect(subject.find(proxy_target.id)).to eq(proxy_target)
       end
 
       it "should raise error if record is not among records in association" do
-        lambda { subject.find(not_among_targets.id) }.should raise_error MassiveRecord::ORM::RecordNotFound
+        expect { subject.find(not_among_targets.id) }.to raise_error MassiveRecord::ORM::RecordNotFound
       end
 
       it "returns record if in a dirty state, when no objects are saved" do
         subject.destroy_all
         subject.reset
-        proxy_owner.stub(:persisted?).and_return false
-        proxy_owner.stub(:new_record?).and_return true
+        allow(proxy_owner).to receive(:persisted?).and_return false
+        allow(proxy_owner).to receive(:new_record?).and_return true
 
         new_proxy_target = Person.new proxy_owner.id+"-friend-2", :name => "H", :age => 9
         subject << new_proxy_target
-        subject.find(new_proxy_target.id).should eq new_proxy_target
+        expect(subject.find(new_proxy_target.id)).to eq new_proxy_target
       end
 
 
 
       it "should not hit database if proxy has been loaded" do
         subject.load_proxy_target
-        Person.should_not_receive(:find)
-        subject.find(proxy_target.id).should == proxy_target
+        expect(Person).not_to receive(:find)
+        expect(subject.find(proxy_target.id)).to eq(proxy_target)
       end
 
       it "should raise error if proxy is loaded, but record is not found in association" do
         subject.load_proxy_target
-        lambda { subject.find(not_among_targets.id) }.should raise_error MassiveRecord::ORM::RecordNotFound
+        expect { subject.find(not_among_targets.id) }.to raise_error MassiveRecord::ORM::RecordNotFound
       end
     end
   end
@@ -899,8 +899,8 @@ describe TestReferencesManyProxy do
       end
 
       it "returns all the targets" do
-        subject.all.should include proxy_target, proxy_target_2
-        subject.all.should_not include proxy_target_3
+        expect(subject.all).to include proxy_target, proxy_target_2
+        expect(subject.all).not_to include proxy_target_3
       end
 
       [:limit, :offset, :starts_with].each do |finder_option|
@@ -913,7 +913,7 @@ describe TestReferencesManyProxy do
 
       it "does not hit database if targets has been loaded" do
         subject.load_proxy_target
-        subject.proxy_target_class.should_not_receive :find
+        expect(subject.proxy_target_class).not_to receive :find
         subject.all
       end
     end
@@ -935,23 +935,23 @@ describe TestReferencesManyProxy do
       end
 
       it "returns all the targets" do
-        subject.all.should include proxy_target, proxy_target_2
-        subject.all.should_not include proxy_target_3
+        expect(subject.all).to include proxy_target, proxy_target_2
+        expect(subject.all).not_to include proxy_target_3
       end
 
       it "accepts to limit the result" do
-        subject.all(:limit => 1).should include proxy_target
-        subject.all.should_not include proxy_target_3, proxy_target_2
+        expect(subject.all(:limit => 1)).to include proxy_target
+        expect(subject.all).not_to include proxy_target_3, proxy_target_2
       end
 
       it "accepts to offset the result" do
-        subject.all(:offset => proxy_owner.id+"-friend-2").should include proxy_target_2
-        subject.all.should_not include proxy_target_3, proxy_target
+        expect(subject.all(:offset => proxy_owner.id+"-friend-2")).to include proxy_target_2
+        expect(subject.all).not_to include proxy_target_3, proxy_target
       end
 
       it "accepts to modify the starts_with" do
-        subject.all(:starts_with => proxy_owner.id+"-friend-1").should include proxy_target
-        subject.all.should_not include proxy_target_3, proxy_target_2
+        expect(subject.all(:starts_with => proxy_owner.id+"-friend-1")).to include proxy_target
+        expect(subject.all).not_to include proxy_target_3, proxy_target_2
       end
 
       it "raises an error on invalid starts_with option" do
@@ -962,13 +962,13 @@ describe TestReferencesManyProxy do
 
       it "accepts option offset" do
         records = subject.all(:offset => proxy_owner.id+"-friend-2")
-        records.should_not include proxy_target, proxy_target_3
-        records.should include proxy_target_2
+        expect(records).not_to include proxy_target, proxy_target_3
+        expect(records).to include proxy_target_2
       end
 
       it "does not hit database if targets has been loaded" do
         subject.load_proxy_target
-        Person.should_not_receive(:do_find)
+        expect(Person).not_to receive(:do_find)
         subject.all
       end
     end
@@ -990,35 +990,35 @@ describe TestReferencesManyProxy do
 
       it "should return empty array if no targets are found" do
         subject.destroy_all
-        subject.limit(1).should be_empty
+        expect(subject.limit(1)).to be_empty
       end
 
 
       it "should do db query with a limited set of ids" do
-        subject.limit(1).should == [proxy_target]
+        expect(subject.limit(1)).to eq([proxy_target])
       end
 
       it "should not be loaded after a limit query" do
-        subject.limit(1).should == [proxy_target]
-        subject.should_not be_loaded
+        expect(subject.limit(1)).to eq([proxy_target])
+        expect(subject).not_to be_loaded
       end
 
       it "should not hit the database if the proxy is loaded" do
         subject.load_proxy_target
-        TestClass.should_not_receive(:find)
+        expect(TestClass).not_to receive(:find)
         subject.limit(1)
       end
 
       it "should return correct result set if proxy is loaded" do
         subject.load_proxy_target
-        subject.limit(1).should == [proxy_target]
+        expect(subject.limit(1)).to eq([proxy_target])
       end
 
       it "returns first record if in a dirty state" do
         subject.delete(proxy_target_2)
         subject.reset
         subject << proxy_target_2
-        subject.limit(1).should eq [proxy_target]
+        expect(subject.limit(1)).to eq [proxy_target]
       end
     end
 
@@ -1041,28 +1041,28 @@ describe TestReferencesManyProxy do
 
       it "should return empty array if no targets are found" do
         subject.destroy_all
-        subject.limit(1).should be_empty
+        expect(subject.limit(1)).to be_empty
       end
 
 
       it "should do db query with a limited set of ids" do
-        subject.limit(1).should == [proxy_target]
+        expect(subject.limit(1)).to eq([proxy_target])
       end
 
       it "should not be loaded after a limit query" do
-        subject.limit(1).should == [proxy_target]
-        subject.should_not be_loaded
+        expect(subject.limit(1)).to eq([proxy_target])
+        expect(subject).not_to be_loaded
       end
 
       it "should not hit the database if the proxy is loaded" do
         subject.load_proxy_target
-        Person.should_not_receive(:find)
+        expect(Person).not_to receive(:find)
         subject.limit(1)
       end
 
       it "should return correct result set if proxy is loaded" do
         subject.load_proxy_target
-        subject.limit(1).should == [proxy_target]
+        expect(subject.limit(1)).to eq([proxy_target])
       end
 
       it "returns first record if in a dirty state" do
@@ -1070,18 +1070,18 @@ describe TestReferencesManyProxy do
         new_proxy_target = Person.new proxy_owner.id+"-friend-2", :name => "H", :age => 9
         subject.reset
         subject << new_proxy_target
-        subject.limit(1).should eq [proxy_target]
+        expect(subject.limit(1)).to eq [proxy_target]
       end
 
       it "returns first record if in a dirty state, when no objects are saved" do
         subject.destroy_all
         subject.reset
-        proxy_owner.stub(:persisted?).and_return false
-        proxy_owner.stub(:new_record?).and_return true
+        allow(proxy_owner).to receive(:persisted?).and_return false
+        allow(proxy_owner).to receive(:new_record?).and_return true
 
         new_proxy_target = Person.new proxy_owner.id+"-friend-2", :name => "H", :age => 9
         subject << new_proxy_target
-        subject.limit(1).should eq [new_proxy_target]
+        expect(subject.limit(1)).to eq [new_proxy_target]
       end
     end
   end

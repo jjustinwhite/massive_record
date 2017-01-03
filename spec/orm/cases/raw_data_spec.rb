@@ -8,11 +8,11 @@ describe MassiveRecord::ORM::RawData do
 
   describe "#initialize" do
     it "assigns value" do
-      subject.value.should eq value
+      expect(subject.value).to eq value
     end
 
     it "assigns created_at" do
-      subject.created_at.should eq created_at
+      expect(subject.created_at).to eq created_at
     end
   end
 
@@ -24,11 +24,11 @@ describe MassiveRecord::ORM::RawData do
       subject { described_class.new_with_data_from(cell) }
 
       it "assigns value" do
-        subject.value.should eq value
+        expect(subject.value).to eq value
       end
 
       it "assigns created_at" do
-        subject.created_at.should eq created_at
+        expect(subject.created_at).to eq created_at
       end
     end
   end
@@ -36,13 +36,13 @@ describe MassiveRecord::ORM::RawData do
 
   describe "#to_s" do
     it "represents itself with it's value" do
-      subject.to_s.should eq value
+      expect(subject.to_s).to eq value
     end
   end
 
   describe "#inspect" do
     it "represents itself with it's value" do
-      subject.to_s.should eq value
+      expect(subject.to_s).to eq value
     end
   end
 
@@ -52,7 +52,7 @@ describe MassiveRecord::ORM::RawData do
       cell = described_class.new_with_data_from(
         MassiveRecord::Wrapper::Cell.new(value: value, created_at: created_at)
       )
-      cell.should eq subject
+      expect(cell).to eq subject
     end
   end
 end

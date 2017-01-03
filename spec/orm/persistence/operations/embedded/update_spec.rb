@@ -34,7 +34,7 @@ describe MassiveRecord::ORM::Persistence::Operations::Embedded::Update do
       it "do persist the changes" do
         record.street = "Oslogata"
         subject.execute
-        person.reload.addresses.first.street.should eq "Oslogata"
+        expect(person.reload.addresses.first.street).to eq "Oslogata"
       end
 
       it "does not update other embedded records" do
@@ -44,7 +44,7 @@ describe MassiveRecord::ORM::Persistence::Operations::Embedded::Update do
 
         subject.execute
 
-        person.reload.addresses.find(another_address.id).street.should eq "Asker too"
+        expect(person.reload.addresses.find(another_address.id).street).to eq "Asker too"
       end
 
       it "does not update attributes on the record it is embedded in" do
@@ -53,7 +53,7 @@ describe MassiveRecord::ORM::Persistence::Operations::Embedded::Update do
 
         subject.execute
 
-        person.reload.name.should eq "Thorbjorn"
+        expect(person.reload.name).to eq "Thorbjorn"
       end
     end
   end

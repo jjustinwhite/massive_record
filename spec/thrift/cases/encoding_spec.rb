@@ -18,7 +18,7 @@ describe "encoding" do
   
   it "should create a new table" do
     column = Apache::Hadoop::Hbase::Thrift::ColumnDescriptor.new{|c| c.name = @column_family}
-    @client.createTable(@table_name, [column]).should be_nil
+    expect(@client.createTable(@table_name, [column])).to be_nil
   end
   
   it "should save standard caracteres" do
@@ -26,11 +26,11 @@ describe "encoding" do
     m.column = "info:first_name"
     m.value  = "Vincent"
     
-    m.value.encoding.should == Encoding::UTF_8
-    @client.mutateRow(@table_name, "ID1", [m], {}).should be_nil
+    expect(m.value.encoding).to eq(Encoding::UTF_8)
+    expect(@client.mutateRow(@table_name, "ID1", [m], {})).to be_nil
 
     row = @client.getRow(@table_name, "ID1", {})[0].columns['info:first_name']
-    row.value.should == "Vincent"
+    expect(row.value).to eq("Vincent")
   end
   
   it "should save UTF8 caracteres" do
@@ -38,11 +38,11 @@ describe "encoding" do
     m.column = "info:first_name"
     m.value  = "Thorbjørn"
     
-    m.value.encoding.should == Encoding::UTF_8
-    @client.mutateRow(@table_name, "ID1", [m], {}).should be_nil
+    expect(m.value.encoding).to eq(Encoding::UTF_8)
+    expect(@client.mutateRow(@table_name, "ID1", [m], {})).to be_nil
 
     row = @client.getRow(@table_name, "ID1", {})[0].columns['info:first_name']
-    row.value.should == "Thorbjørn"
+    expect(row.value).to eq("Thorbjørn")
   end
   
   it "should save JSON" do
@@ -50,11 +50,11 @@ describe "encoding" do
     m.column = "info:first_name"
     m.value  = { :p1 => "Vincent", :p2 => "Thorbjørn" }.to_json.force_encoding(Encoding::UTF_8)
     
-    m.value.encoding.should == Encoding::UTF_8
-    @client.mutateRow(@table_name, "ID1", [m], {}).should be_nil
+    expect(m.value.encoding).to eq(Encoding::UTF_8)
+    expect(@client.mutateRow(@table_name, "ID1", [m], {})).to be_nil
 
     row = @client.getRow(@table_name, "ID1", {})[0].columns['info:first_name']
-    JSON.parse(row.value).should == { 'p1' => "Vincent", 'p2' => "Thorbjørn" }
+    expect(JSON.parse(row.value)).to eq({ 'p1' => "Vincent", 'p2' => "Thorbjørn" })
   end
   
   it "should take care of several encodings" do
@@ -66,14 +66,14 @@ describe "encoding" do
     m2.column = "info:company_name"
     m2.value  = "Thorbjørn"
     
-    m1.value.encoding.should == Encoding::UTF_8
-    m2.value.encoding.should == Encoding::UTF_8
+    expect(m1.value.encoding).to eq(Encoding::UTF_8)
+    expect(m2.value.encoding).to eq(Encoding::UTF_8)
 
-    @client.mutateRow(@table_name, "ID1", [m1, m2], {}).should be_nil
+    expect(@client.mutateRow(@table_name, "ID1", [m1, m2], {})).to be_nil
   end
   
   it "should destroy the table" do
-    @client.disableTable(@table_name).should be_nil
-    @client.deleteTable(@table_name).should be_nil
+    expect(@client.disableTable(@table_name)).to be_nil
+    expect(@client.deleteTable(@table_name)).to be_nil
   end
 end

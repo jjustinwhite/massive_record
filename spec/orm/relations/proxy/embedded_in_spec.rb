@@ -21,16 +21,16 @@ describe TestEmbeddedInProxy do
     context "current target being blank" do
       it "adds itself to the targets embedded collection" do
         subject.replace(proxy_target)
-        proxy_target.addresses.should include proxy_owner
+        expect(proxy_target.addresses).to include proxy_owner
       end
     end
 
     context "current target existing" do
       context "and target is the same as current" do
         it "just push self to target once" do
-          proxy_target.should_receive(:addresses).twice.and_return([])
+          expect(proxy_target).to receive(:addresses).twice.and_return([])
           2.times { subject.replace(proxy_target) }
-          proxy_target.addresses.should include proxy_owner
+          expect(proxy_target.addresses).to include proxy_owner
         end
       end
 
@@ -42,15 +42,15 @@ describe TestEmbeddedInProxy do
           subject.replace(proxy_target)
           subject.replace(proxy_target_2)
 
-          proxy_target.addresses.should_not include proxy_owner
-          proxy_target_2.addresses.should include proxy_owner
-          proxy_owner.should_not be_destroyed
+          expect(proxy_target.addresses).not_to include proxy_owner
+          expect(proxy_target_2.addresses).to include proxy_owner
+          expect(proxy_owner).not_to be_destroyed
         end
       end
     end
 
     it "raises error if inverse of does not exist" do
-      metadata.should_receive(:inverse_of).any_number_of_times.and_return("something_which_does_not_exist")
+      allow(metadata).to receive(:inverse_of).and_return("something_which_does_not_exist")
       expect { subject.replace(proxy_target) }.to raise_error MassiveRecord::ORM::RelationMissing
     end
   end

@@ -12,9 +12,20 @@ describe MassiveRecord::ORM::Persistence::Operations do
         describe "##{method}" do
           subject { described_class.send(method, record, options) }
 
-          its(:record) { should eq record }
-          its(:klass) { should eq record.class }
-          its(:options) { should eq options }
+          describe '#record' do
+            subject { super().record }
+            it { should eq record }
+          end
+
+          describe '#klass' do
+            subject { super().klass }
+            it { should eq record.class }
+          end
+
+          describe '#options' do
+            subject { super().options }
+            it { should eq options }
+          end
 
           it "is an instance of Persistence::Operations::#{method.to_s.classify}" do
             klass = "MassiveRecord::ORM::Persistence::Operations::#{method.to_s.classify}".constantize
@@ -23,7 +34,7 @@ describe MassiveRecord::ORM::Persistence::Operations do
 
           it "is possible to suppress" do
              MassiveRecord::ORM::Persistence::Operations.suppress do
-               subject.should be_instance_of MassiveRecord::ORM::Persistence::Operations::Suppress
+               expect(subject).to be_instance_of MassiveRecord::ORM::Persistence::Operations::Suppress
              end
           end
 
@@ -46,9 +57,20 @@ describe MassiveRecord::ORM::Persistence::Operations do
         describe "##{method}" do
           subject { described_class.send(method, record, options) }
 
-          its(:record) { should eq record }
-          its(:klass) { should eq record.class }
-          its(:options) { should eq options }
+          describe '#record' do
+            subject { super().record }
+            it { should eq record }
+          end
+
+          describe '#klass' do
+            subject { super().klass }
+            it { should eq record.class }
+          end
+
+          describe '#options' do
+            subject { super().options }
+            it { should eq options }
+          end
 
           it "is an instance of Persistence::Operations::#{method.to_s.classify}" do
             klass = "MassiveRecord::ORM::Persistence::Operations::Embedded::#{method.to_s.classify}".constantize
@@ -57,7 +79,7 @@ describe MassiveRecord::ORM::Persistence::Operations do
 
           it "is possible to suppress" do
              MassiveRecord::ORM::Persistence::Operations.suppress do
-               subject.should be_instance_of MassiveRecord::ORM::Persistence::Operations::Suppress
+               expect(subject).to be_instance_of MassiveRecord::ORM::Persistence::Operations::Suppress
              end
           end
 

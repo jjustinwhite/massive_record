@@ -4,8 +4,11 @@ shared_examples_for "a persistence table operation class" do
   describe described_class do
     subject { described_class }
 
-    its(:included_modules) {
+    describe '#included_modules' do
+      subject { super().included_modules }
+      it {
       should include MassiveRecord::ORM::Persistence::Operations::TableOperationHelpers
     }
+    end
   end
 end

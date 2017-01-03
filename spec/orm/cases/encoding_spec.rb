@@ -14,12 +14,12 @@ describe "encoding" do
     end
 
     it "should be able to store UTF-8 encoded strings" do
-      @person_from_db.should == @person
-      @person_from_db.name.should == "Thorbjørn"
+      expect(@person_from_db).to eq(@person)
+      expect(@person_from_db.name).to eq("Thorbjørn")
     end
 
     it "should return string as UTF-8 encoded strings" do
-      @person_from_db.name.encoding.should == Encoding::UTF_8
+      expect(@person_from_db.name.encoding).to eq(Encoding::UTF_8)
     end
   end
 
@@ -39,11 +39,11 @@ describe "encoding" do
     end
 
     it "should be able to store UTF-8 encoded strings" do
-      @row_from_db.values["info:name"].force_encoding(Encoding::UTF_8).should == "Thorbjørn"
+      expect(@row_from_db.values["info:name"].force_encoding(Encoding::UTF_8)).to eq("Thorbjørn")
     end
 
     it "should return string as UTF-8 encoded strings" do
-      @row_from_db.values["info:name"].encoding.should == Encoding::UTF_8
+      expect(@row_from_db.values["info:name"].encoding).to eq(Encoding::UTF_8)
     end
   end
 end

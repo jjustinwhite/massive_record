@@ -38,14 +38,14 @@ describe MassiveRecord::Adapters::Thrift::Table do
   end
 
   it "finds one id" do
-    subject.find("1").id.should eq "1"
+    expect(subject.find("1").id).to eq "1"
   end
 
   it "finds one id given as array" do
-    subject.find(["1"]).first.id.should eq "1"
+    expect(subject.find(["1"]).first.id).to eq "1"
   end
 
   it "finds multiple ids" do
-    subject.find(["1", "2"]).collect(&:id).should eq ["1", "2"]
+    expect(subject.find(["1", "2"]).collect(&:id)).to eq ["1", "2"]
   end
 end

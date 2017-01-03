@@ -2,27 +2,27 @@ require 'spec_helper'
 
 shared_examples_for 'an id factory' do
   it "is a singleton" do
-    MassiveRecord::ORM::IdFactory::AtomicIncrementation.included_modules.should include(Singleton)
+    expect(MassiveRecord::ORM::IdFactory::AtomicIncrementation.included_modules).to include(Singleton)
   end
 
   describe "#next_for" do
     it "responds_to next_for" do
-      subject.should respond_to :next_for
+      expect(subject).to respond_to :next_for
     end
 
     it "uses incomming table name if it's a string" do
-      subject.should_receive(:next_id).with(hash_including(:table => "test_table"))
+      expect(subject).to receive(:next_id).with(hash_including(:table => "test_table"))
       subject.next_for "test_table"
     end
 
     it "usees incomming table name if it's a symbol" do
-      subject.should_receive(:next_id).with(hash_including(:table => "test_table"))
+      expect(subject).to receive(:next_id).with(hash_including(:table => "test_table"))
       subject.next_for :test_table
     end
 
     it "asks object for it's table name if it responds to that" do
-      Person.should_receive(:table_name).any_number_of_times.and_return("people")
-      subject.should_receive(:next_id).with(hash_including(:table => "people"))
+      allow(Person).to receive(:table_name).and_return("people")
+      expect(subject).to receive(:next_id).with(hash_including(:table => "people"))
       subject.next_for(Person)
     end
 
@@ -31,13 +31,13 @@ shared_examples_for 'an id factory' do
         ids << subject.next_for(Person)
       end
 
-      ids.should eq ids.uniq
+      expect(ids).to eq ids.uniq
     end
   end
 
   describe ".next_for" do
     it "delegates to it's instance" do
-      subject.should_receive(:next_for).with("cars")
+      expect(subject).to receive(:next_for).with("cars")
       described_class.next_for("cars")
     end
   end

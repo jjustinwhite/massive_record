@@ -27,21 +27,21 @@ describe TestReferencesOnePolymorphicProxy do
       person = Person.new
       proxy_owner.attachable_id = "ID1"
       proxy_owner.attachable_type = "person"
-      Person.should_receive(:find).and_return(person)
-      proxy_owner.attachable.should == person
+      expect(Person).to receive(:find).and_return(person)
+      expect(proxy_owner.attachable).to eq(person)
     end
 
     it "should not be able to find proxy_target if foreign_key is nil" do
       proxy_owner.attachable_id = nil
       proxy_owner.attachable_type = "person"
-      Person.should_not_receive(:find)
+      expect(Person).not_to receive(:find)
       proxy_owner.attachable
     end
 
     it "should not be able to find proxy_target if type is nil" do
       proxy_owner.attachable_id = "ID1"
       proxy_owner.attachable_type = nil
-      Person.should_not_receive(:find)
+      expect(Person).not_to receive(:find)
       proxy_owner.attachable
     end
   end
@@ -50,57 +50,57 @@ describe TestReferencesOnePolymorphicProxy do
   describe "setting proxy_target object" do
     it "should set the proxy_target's id as the foreign key in proxy_owner" do
       proxy_owner.attachable = proxy_target
-      proxy_owner.attachable_id.should == proxy_target.id
+      expect(proxy_owner.attachable_id).to eq(proxy_target.id)
     end
 
     it "should set the proxy_target's type in proxy_owner" do
       proxy_owner.attachable_type = nil
       proxy_owner.attachable = proxy_target
-      proxy_owner.attachable_type.should == proxy_target.class.to_s
+      expect(proxy_owner.attachable_type).to eq(proxy_target.class.to_s)
     end
 
     it "should reset the proxy_targets foreign key if proxy_target is nil" do
       proxy_owner.attachable = proxy_target
       proxy_owner.attachable = nil
-      proxy_owner.attachable_id.should be_nil
+      expect(proxy_owner.attachable_id).to be_nil
     end
 
     it "should reset the proxy_target's type in proxy_owner if proxy_target is nil" do
       proxy_owner.attachable = proxy_target
       proxy_owner.attachable = nil
-      proxy_owner.attachable_type.should be_nil
+      expect(proxy_owner.attachable_type).to be_nil
     end
 
     it "should not set the proxy_target's id as the foreign key if we are not persisting the foreign key" do
-      proxy_owner.stub(:respond_to?).and_return(false)
+      allow(proxy_owner).to receive(:respond_to?).and_return(false)
       proxy_owner.attachable = proxy_target
-      proxy_owner.attachable_id.should be_nil
+      expect(proxy_owner.attachable_id).to be_nil
     end
 
     it "should not set the proxy_target's type if proxy_owner is not responding to type setter" do
       proxy_owner.attachable_type = nil
-      proxy_owner.stub(:respond_to?).and_return(false)
+      allow(proxy_owner).to receive(:respond_to?).and_return(false)
       proxy_owner.attachable = proxy_target
-      proxy_owner.attachable_type.should be_nil
+      expect(proxy_owner.attachable_type).to be_nil
     end
 
     it "should not set the proxy_target's id as the foreign key if the owner has been destroyed" do
-      proxy_owner.should_receive(:destroyed?).and_return true
+      expect(proxy_owner).to receive(:destroyed?).and_return true
       proxy_owner.attachable = proxy_target
-      proxy_owner.attachable_id.should be_nil
+      expect(proxy_owner.attachable_id).to be_nil
     end
 
     it "should not set the proxy_target's type as the foreign key if the owner has been destroyed" do
-      proxy_owner.should_receive(:destroyed?).and_return true
+      expect(proxy_owner).to receive(:destroyed?).and_return true
       proxy_owner.attachable = proxy_target
-      proxy_owner.attachable_type.should be_nil
+      expect(proxy_owner.attachable_type).to be_nil
     end
 
 
 
     it "should set the proxy_target's id as the foreign key even if we are not persisting it if the record responds to setter method" do
       proxy_owner.attachable = proxy_target
-      proxy_owner.attachable_id.should == proxy_target.id
+      expect(proxy_owner.attachable_id).to eq(proxy_target.id)
     end
   end
 

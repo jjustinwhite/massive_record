@@ -17,7 +17,7 @@ describe TestEmbeddedInPolymorphicProxy do
   describe "generic behaviour" do
     before do 
       # Little hack just to make one generic relation proxy test pass..
-      metadata.stub(:proxy_target_class).and_return TestClass
+      allow(metadata).to receive(:proxy_target_class).and_return TestClass
     end
 
     it_should_behave_like "relation proxy"
@@ -29,7 +29,7 @@ describe TestEmbeddedInPolymorphicProxy do
     let(:person) { Person.new "person-id-1", :name => "Test", :age => 29 }
 
     it "allows for polymorphism if configured for it" do
-      expect { proxy_owner.adressable = person }.not_to raise_error MassiveRecord::ORM::RelationTypeMismatch
+      expect { proxy_owner.adressable = person }.not_to raise_error
     end
   end
 end

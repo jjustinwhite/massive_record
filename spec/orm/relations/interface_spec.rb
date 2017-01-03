@@ -16,7 +16,7 @@ describe MassiveRecord::ORM::Relations::Interface do
     end
 
     it "should not share relations" do
-      Person.relations.should_not == PersonWithTimestamp.relations
+      expect(Person.relations).not_to eq(PersonWithTimestamp.relations)
     end
   end
 
@@ -26,15 +26,15 @@ describe MassiveRecord::ORM::Relations::Interface do
       subject { Person.relations.detect { |relation| relation.name == "boss" } }
 
       it "should have the reference one meta data stored in relations" do
-        Person.relations.detect { |relation| relation.name == "boss" }.should_not be_nil
+        expect(Person.relations.detect { |relation| relation.name == "boss" }).not_to be_nil
       end
 
       it "should have type set to references_one" do
-        subject.relation_type.should == "references_one"
+        expect(subject.relation_type).to eq("references_one")
       end
 
       it "should raise an error if the same relaton is called for twice" do
-        lambda { Person.references_one :boss }.should raise_error MassiveRecord::ORM::RelationAlreadyDefined
+        expect { Person.references_one :boss }.to raise_error MassiveRecord::ORM::RelationAlreadyDefined
       end
     end
 
@@ -52,39 +52,39 @@ describe MassiveRecord::ORM::Relations::Interface do
 
       describe "record getter and setter" do
         it "should return nil if foreign_key is nil" do
-          subject.boss.should be_nil 
+          expect(subject.boss).to be_nil 
         end
 
         it "should return the proxy's proxy_target if boss is set" do
           subject.boss = boss
-          subject.boss.should == boss
+          expect(subject.boss).to eq(boss)
         end
 
         it "should be able to reset the proxy" do
-          proxy.should_receive(:load_proxy_target).and_return(true)
-          proxy.should_receive(:reset) 
+          expect(proxy).to receive(:load_proxy_target).and_return(true)
+          expect(proxy).to receive(:reset) 
           subject.boss.reset
         end
 
         it "should be able to reload the proxy" do
-          proxy.should_receive(:load_proxy_target).and_return(true)
-          proxy.should_receive(:reload)
+          expect(proxy).to receive(:load_proxy_target).and_return(true)
+          expect(proxy).to receive(:reload)
           subject.boss.reload
         end
 
         it "should set the foreign_key in proxy_owner when proxy_target is set" do
           subject.boss = boss
-          subject.boss_id.should == boss.id
+          expect(subject.boss_id).to eq(boss.id)
         end
 
         it "should load proxy_target object when read method is called" do
-          PersonWithTimestamp.should_receive(:find).and_return(boss)
+          expect(PersonWithTimestamp).to receive(:find).and_return(boss)
           subject.boss_id = boss.id
-          subject.boss.should == boss
+          expect(subject.boss).to eq(boss)
         end
 
         it "should not load proxy_target twice" do
-          PersonWithTimestamp.should_receive(:find).once.and_return(boss)
+          expect(PersonWithTimestamp).to receive(:find).once.and_return(boss)
           subject.boss_id = boss.id
           2.times { subject.boss }
         end
@@ -93,7 +93,7 @@ describe MassiveRecord::ORM::Relations::Interface do
 
       it "should be assignable in initializer" do
         person = Person.new :boss => boss
-        person.boss.should == boss
+        expect(person.boss).to eq(boss)
       end
     end
   end
@@ -104,15 +104,15 @@ describe MassiveRecord::ORM::Relations::Interface do
       subject { TestClass.relations.detect { |relation| relation.name == "attachable" } }
 
       it "should have the reference one polymorphic meta data stored in relations" do
-        TestClass.relations.detect { |relation| relation.name == "attachable" }.should_not be_nil
+        expect(TestClass.relations.detect { |relation| relation.name == "attachable" }).not_to be_nil
       end
 
       it "should have type set to correct type" do
-        subject.relation_type.should == "references_one_polymorphic"
+        expect(subject.relation_type).to eq("references_one_polymorphic")
       end
 
       it "should raise an error if the same relaton is called for twice" do
-        lambda { TestClass.references_one :attachable }.should raise_error MassiveRecord::ORM::RelationAlreadyDefined
+        expect { TestClass.references_one :attachable }.to raise_error MassiveRecord::ORM::RelationAlreadyDefined
       end
     end
 
@@ -131,22 +131,22 @@ describe MassiveRecord::ORM::Relations::Interface do
 
       describe "record getter and setter" do
         it "should return nil if foreign_key is nil" do
-          subject.attachable.should be_nil 
+          expect(subject.attachable).to be_nil 
         end
 
         it "should return the proxy's proxy_target if attachable is set" do
           subject.attachable = attachable
-          subject.attachable.should == attachable
+          expect(subject.attachable).to eq(attachable)
         end
 
         it "should set the foreign_key in proxy_owner when proxy_target is set" do
           subject.attachable = attachable
-          subject.attachable_id.should == attachable.id
+          expect(subject.attachable_id).to eq(attachable.id)
         end
 
         it "should set the type in proxy_owner when proxy_target is set" do
           subject.attachable = attachable
-          subject.attachable_type.should == attachable.class.to_s
+          expect(subject.attachable_type).to eq(attachable.class.to_s)
         end
 
 
@@ -161,12 +161,12 @@ describe MassiveRecord::ORM::Relations::Interface do
             end
 
             it "should load proxy_target object when read method is called" do
-              polymorphic_class.should_receive(:find).and_return(attachable)
-              subject.attachable.should == attachable
+              expect(polymorphic_class).to receive(:find).and_return(attachable)
+              expect(subject.attachable).to eq(attachable)
             end
 
             it "should not load proxy_target twice" do
-              polymorphic_class.should_receive(:find).once.and_return(attachable)
+              expect(polymorphic_class).to receive(:find).once.and_return(attachable)
               2.times { subject.attachable }
             end
           end
@@ -183,15 +183,15 @@ describe MassiveRecord::ORM::Relations::Interface do
       subject { Person.relations.detect { |relation| relation.name == "test_classes" } }
 
       it "should have the reference one meta data stored in relations" do
-        Person.relations.detect { |relation| relation.name == "test_classes" }.should_not be_nil
+        expect(Person.relations.detect { |relation| relation.name == "test_classes" }).not_to be_nil
       end
 
       it "should have type set to references_many" do
-        subject.relation_type.should == "references_many"
+        expect(subject.relation_type).to eq("references_many")
       end
 
       it "should raise an error if the same relaton is called for twice" do
-        lambda { Person.references_one :test_classes }.should raise_error MassiveRecord::ORM::RelationAlreadyDefined
+        expect { Person.references_one :test_classes }.to raise_error MassiveRecord::ORM::RelationAlreadyDefined
       end
     end
 
@@ -207,17 +207,17 @@ describe MassiveRecord::ORM::Relations::Interface do
       it { should respond_to :test_class_ids= }
 
       it "should have an array as foreign_key attribute" do
-        subject.test_class_ids.should be_instance_of Array
+        expect(subject.test_class_ids).to be_instance_of Array
       end
 
       it "should be assignable" do
         subject.test_classes = [test_class]
-        subject.test_classes.should == [test_class]
+        expect(subject.test_classes).to eq([test_class])
       end
 
       it "should be assignable in initializer" do
         person = Person.new :test_classes => [test_class]
-        person.test_classes.should == [test_class]
+        expect(person.test_classes).to eq([test_class])
       end
     end
   end
@@ -229,11 +229,11 @@ describe MassiveRecord::ORM::Relations::Interface do
         subject { Person.relations.detect { |relation| relation.name == "addresses" } }
 
         it "stores the relation on the class" do
-          Person.relations.detect { |relation| relation.name == "addresses" }.should_not be_nil
+          expect(Person.relations.detect { |relation| relation.name == "addresses" }).not_to be_nil
         end
 
         it "has correct type on relation" do
-          subject.relation_type.should == "embeds_many"
+          expect(subject.relation_type).to eq("embeds_many")
         end
 
         it "raises error if relation defined twice" do
@@ -249,28 +249,28 @@ describe MassiveRecord::ORM::Relations::Interface do
         it { should respond_to :addresses }
 
         it "should be empty when no addresses has been added" do
-          subject.addresses.should be_empty
+          expect(subject.addresses).to be_empty
         end
 
         it "has a known column family for the embedded records" do
-          subject.column_families.collect(&:name).should include "addresses"
+          expect(subject.column_families.collect(&:name)).to include "addresses"
         end
 
         it "is assignable" do
           subject.addresses = [address]
-          subject.addresses.should == [address]
+          expect(subject.addresses).to eq([address])
         end
 
         it "is assignable in initializer" do
           person = Person.new :addresses => [address]
-          person.addresses.should == [address]
+          expect(person.addresses).to eq([address])
         end
 
         it "parent is invalid when one of embedded records is" do
           subject.addresses << address
           subject.save!
           address.street = nil
-          subject.should_not be_valid
+          expect(subject).not_to be_valid
         end
       end
     end
@@ -280,11 +280,11 @@ describe MassiveRecord::ORM::Relations::Interface do
         subject { Person.relations.detect { |relation| relation.name == "cars" } }
 
         it "stores the relation on the class" do
-          Person.relations.detect { |relation| relation.name == "cars" }.should_not be_nil
+          expect(Person.relations.detect { |relation| relation.name == "cars" }).not_to be_nil
         end
 
         it "has correct type on relation" do
-          subject.relation_type.should == "embeds_many"
+          expect(subject.relation_type).to eq("embeds_many")
         end
 
         it "raises error if relation defined twice" do
@@ -300,21 +300,21 @@ describe MassiveRecord::ORM::Relations::Interface do
         it { should respond_to :cars }
 
         it "should be empty when no cars has been added" do
-          subject.cars.should be_empty
+          expect(subject.cars).to be_empty
         end
 
         it "has a known column family for the embedded records" do
-          subject.column_families.collect(&:name).should include "info"
+          expect(subject.column_families.collect(&:name)).to include "info"
         end
 
         it "is assignable" do
           subject.cars = [car]
-          subject.cars.should == [car]
+          expect(subject.cars).to eq([car])
         end
 
         it "is assignable in initializer" do
           person = Person.new :cars => [car]
-          person.cars.should == [car]
+          expect(person.cars).to eq([car])
         end
 
         it "is persistable" do
@@ -322,11 +322,11 @@ describe MassiveRecord::ORM::Relations::Interface do
           subject.save!
           from_database = Person.find subject.id
 
-          from_database.name.should eq subject.name
-          from_database.email.should eq subject.email
-          from_database.age.should eq subject.age
+          expect(from_database.name).to eq subject.name
+          expect(from_database.email).to eq subject.email
+          expect(from_database.age).to eq subject.age
 
-          from_database.cars.should eq subject.cars
+          expect(from_database.cars).to eq subject.cars
         end
       end
     end
@@ -339,11 +339,11 @@ describe MassiveRecord::ORM::Relations::Interface do
         subject { Address.relations.detect { |relation| relation.name == "person" } }
 
         it "stores the relation on the class" do
-          subject.should_not be_nil
+          expect(subject).not_to be_nil
         end
 
         it "has correct type on relation" do
-          subject.relation_type.should == "embedded_in"
+          expect(subject.relation_type).to eq("embedded_in")
         end
 
         it "raises error if relation defined twice" do
@@ -358,19 +358,19 @@ describe MassiveRecord::ORM::Relations::Interface do
 
         it "sets and gets the person" do
           subject.person = person
-          subject.person.should eq person
+          expect(subject.person).to eq person
         end
 
         it "adds itself to the collection within the target's class" do
-          person.stub(:valid?).and_return true
+          allow(person).to receive(:valid?).and_return true
           subject.person = person
-          person.addresses.should include subject
+          expect(person.addresses).to include subject
         end
 
         it "assigns embedded in attributes with initialize" do
           address = Address.new "id1", :person => person, :street => "Asker"
-          address.person.should eq person
-          person.addresses.should include address
+          expect(address.person).to eq person
+          expect(person.addresses).to include address
         end
       end
     end
@@ -380,11 +380,11 @@ describe MassiveRecord::ORM::Relations::Interface do
         subject { Address.relations.detect { |relation| relation.name == "addressable" } }
 
         it "stores the relation on the class" do
-          subject.should_not be_nil
+          expect(subject).not_to be_nil
         end
 
         it "has correct type on relation" do
-          subject.relation_type.should == "embedded_in_polymorphic"
+          expect(subject.relation_type).to eq("embedded_in_polymorphic")
         end
 
         it "raises error if relation defined twice" do
@@ -399,12 +399,12 @@ describe MassiveRecord::ORM::Relations::Interface do
 
         it "sets and gets the test class" do
           subject.addressable = test_class
-          subject.addressable.should eq test_class
+          expect(subject.addressable).to eq test_class
         end
 
         it "adds itself to the collection within the target's class" do
           subject.addressable = test_class
-          test_class.addresses.should include subject
+          expect(test_class.addresses).to include subject
         end
       end
     end

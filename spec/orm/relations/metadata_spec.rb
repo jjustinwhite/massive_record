@@ -15,49 +15,52 @@ describe MassiveRecord::ORM::Relations::Metadata do
       :foreign_key => :my_car_id, :class_name => "Vehicle", :store_in => :info,
       :polymorphic => true, :records_starts_from => :records_starts_from, :inverse_of => :inverse_of
     })
-    metadata.name.should == "car"
-    metadata.foreign_key.should == "my_car_id"
-    metadata.class_name.should == "Vehicle"
-    metadata.store_in.should == "info"
-    metadata.records_starts_from.should == :records_starts_from
-    metadata.inverse_of.should eq 'inverse_of'
-    metadata.should be_polymorphic
+    expect(metadata.name).to eq("car")
+    expect(metadata.foreign_key).to eq("my_car_id")
+    expect(metadata.class_name).to eq("Vehicle")
+    expect(metadata.store_in).to eq("info")
+    expect(metadata.records_starts_from).to eq(:records_starts_from)
+    expect(metadata.inverse_of).to eq 'inverse_of'
+    expect(metadata).to be_polymorphic
   end
 
   it "should not be possible to set relation type through initializer" do
     metadata = subject.class.new :car, :relation_type => :foo
-    metadata.relation_type.should be_nil
+    expect(metadata.relation_type).to be_nil
   end
 
 
-  its(:name) { should be_nil }
+  describe '#name' do
+    subject { super().name }
+    it { should be_nil }
+  end
 
   it "should return name as string" do
     subject.name = :foo
-    subject.name.should == "foo"
+    expect(subject.name).to eq("foo")
   end
 
 
   describe "#class_name" do
     it "should return whatever it's being set to" do
       subject.class_name = "Person"
-      subject.class_name.should == "Person"
+      expect(subject.class_name).to eq("Person")
     end
 
     it "should return class name as a string" do
       subject.class_name = Person
-      subject.class_name.should == "Person"
+      expect(subject.class_name).to eq("Person")
     end
 
     it "should calculate it from name" do
       subject.name = :employee
-      subject.class_name.should == "Employee"
+      expect(subject.class_name).to eq("Employee")
     end
 
     it "should calculate correct class name if represents a collection" do
       subject.relation_type = "references_many"
       subject.name = "persons"
-      subject.class_name.should == "Person"
+      expect(subject.class_name).to eq("Person")
     end
   end
 
@@ -67,31 +70,31 @@ describe MassiveRecord::ORM::Relations::Metadata do
   describe "#foreign_key" do
     it "should return whatever it's being set to" do
       subject.foreign_key = "person_id"
-      subject.foreign_key.should == "person_id"
+      expect(subject.foreign_key).to eq("person_id")
     end
 
     it "should return foreign key as string" do
       subject.foreign_key = :person_id
-      subject.foreign_key.should == "person_id"
+      expect(subject.foreign_key).to eq("person_id")
     end
 
     it "should try and calculate the foreign key from the name" do
       subject.class_name = "PersonWithSomething"
       subject.name = :person
-      subject.foreign_key.should == "person_id"
+      expect(subject.foreign_key).to eq("person_id")
     end
 
     it "should return plural for if meta data is representing a many relation" do
       subject.relation_type = :references_many
       subject.name = :persons
-      subject.foreign_key.should == "person_ids"
+      expect(subject.foreign_key).to eq("person_ids")
     end
   end
 
   describe "#foreign_key_setter" do
     it "should return whatever the foreign_key is pluss =" do
-      subject.should_receive(:foreign_key).and_return("custom_key")
-      subject.foreign_key_setter.should == "custom_key="
+      expect(subject).to receive(:foreign_key).and_return("custom_key")
+      expect(subject.foreign_key_setter).to eq("custom_key=")
     end
   end
 
@@ -100,7 +103,10 @@ describe MassiveRecord::ORM::Relations::Metadata do
       context type do
         before { subject.relation_type = type }
 
-        its(:embedded?) { should be_false }
+        describe '#embedded?' do
+          subject { super().embedded? }
+          it { should be_false }
+        end
       end
     end
 
@@ -108,7 +114,10 @@ describe MassiveRecord::ORM::Relations::Metadata do
       context type do
         before { subject.relation_type = type }
 
-        its(:embedded?) { should be_true }
+        describe '#embedded?' do
+          subject { super().embedded? }
+          it { should be_true }
+        end
       end
     end
   end
@@ -117,11 +126,14 @@ describe MassiveRecord::ORM::Relations::Metadata do
     context "references" do
       before { subject.relation_type = :references_many }
 
-      its(:store_in) { should be_nil }
+      describe '#store_in' do
+        subject { super().store_in }
+        it { should be_nil }
+      end
 
       it "should be able to set column family to store foreign key in" do
         subject.store_in = :info
-        subject.store_in.should == "info"
+        expect(subject.store_in).to eq("info")
       end
 
       it "should know its persisting foreign key if foreign key stored in has been set" do
@@ -142,8 +154,15 @@ describe MassiveRecord::ORM::Relations::Metadata do
         subject.relation_type = :embeds_many
       end
 
-      its(:store_in) { should eq "addresses" }
-      its(:persisting_foreign_key?) { should be_false }
+      describe '#store_in' do
+        subject { super().store_in }
+        it { should eq "addresses" }
+      end
+
+      describe '#persisting_foreign_key?' do
+        subject { super().persisting_foreign_key? }
+        it { should be_false }
+      end
     end
   end
 
@@ -155,32 +174,32 @@ describe MassiveRecord::ORM::Relations::Metadata do
 
     it "is readable" do
       subject.owner_class = Address
-      subject.owner_class.should == Address
+      expect(subject.owner_class).to eq(Address)
     end
   end
 
   describe "#inverse_of" do
     it "returns whatever it is set to" do
       subject.inverse_of = :addresses
-      subject.inverse_of.should eq 'addresses'
+      expect(subject.inverse_of).to eq 'addresses'
     end
 
     it "calculates inverse of from the owner_class for embedded_in" do
       subject.relation_type = :embedded_in
       subject.owner_class = Address
-      subject.inverse_of.should eq 'addresses'
+      expect(subject.inverse_of).to eq 'addresses'
     end
 
     it "calculates inverse of from the owner_class for embedded_in" do
       subject.relation_type = :embedded_in
       subject.owner_class = AddressWithTimestamp
-      subject.inverse_of.should eq 'address_with_timestamps'
+      expect(subject.inverse_of).to eq 'address_with_timestamps'
     end
 
     it "calculates inverse of from the owner_class for embeds_many" do
       subject.relation_type = :embeds_many
       subject.owner_class = Person
-      subject.inverse_of.should eq 'person'
+      expect(subject.inverse_of).to eq 'person'
     end
 
     it "raises an error if not set nor owner class" do
@@ -194,7 +213,7 @@ describe MassiveRecord::ORM::Relations::Metadata do
 
   it "should compare two meta datas based on name" do
     other = MassiveRecord::ORM::Relations::Metadata.new(subject.name)
-    other.should == subject
+    expect(other).to eq(subject)
   end
 
   it "should have the same hash value for the same name" do
@@ -208,17 +227,17 @@ describe MassiveRecord::ORM::Relations::Metadata do
     let(:proxy) { subject.relation_type = "references_one" and subject.new_relation_proxy(proxy_owner) }
 
     it "should return a proxy where proxy_owner is assigned" do
-      proxy.proxy_owner.should == proxy_owner
+      expect(proxy.proxy_owner).to eq(proxy_owner)
     end
 
     it "should return a proxy where metadata is assigned" do
-      proxy.metadata.should == subject
+      expect(proxy.metadata).to eq(subject)
     end
 
     it "should append _polymorphic to the proxy name if it is polymorphic" do
       subject.polymorphic = true
       subject.relation_type = "references_one"
-      subject.relation_type.should == "references_one_polymorphic"
+      expect(subject.relation_type).to eq("references_one_polymorphic")
     end
   end
 
@@ -229,18 +248,18 @@ describe MassiveRecord::ORM::Relations::Metadata do
     end
 
     it "should remove _id and add _type to foreign_key" do
-      subject.should_receive(:foreign_key).and_return("foo_id")
-      subject.polymorphic_type_column.should == "foo_type"
+      expect(subject).to receive(:foreign_key).and_return("foo_id")
+      expect(subject.polymorphic_type_column).to eq("foo_type")
     end
 
     it "should simply add _type if foreign_key does not end on _id" do
-      subject.should_receive(:foreign_key).and_return("foo_id_b")
-      subject.polymorphic_type_column.should == "foo_id_b_type"
+      expect(subject).to receive(:foreign_key).and_return("foo_id_b")
+      expect(subject.polymorphic_type_column).to eq("foo_id_b_type")
     end
 
     it "should return setter method" do
-      subject.should_receive(:polymorphic_type_column).and_return("yey")
-      subject.polymorphic_type_column_setter.should == "yey="
+      expect(subject).to receive(:polymorphic_type_column).and_return("yey")
+      expect(subject.polymorphic_type_column_setter).to eq("yey=")
     end
   end
 
@@ -249,12 +268,12 @@ describe MassiveRecord::ORM::Relations::Metadata do
     it "should not have any proc if records_starts_from is nil" do
       subject.find_with = "foo"
       subject.records_starts_from = nil
-      subject.find_with.should be_nil
+      expect(subject.find_with).to be_nil
     end
 
     it "should buld a proc with records_starts_from set" do
       subject.records_starts_from = :friends_records_starts_from_id
-      subject.find_with.should be_instance_of Proc
+      expect(subject.find_with).to be_instance_of Proc
     end
 
     describe "proc" do
@@ -266,12 +285,12 @@ describe MassiveRecord::ORM::Relations::Metadata do
       end
 
       it "should call proxy_target class with all, start with proxy_owner's start from id response" do
-        Person.should_receive(:all).with(hash_including(:starts_with => proxy_owner.friends_records_starts_from_id))
+        expect(Person).to receive(:all).with(hash_including(:starts_with => proxy_owner.friends_records_starts_from_id))
         find_with_proc.call(proxy_owner)
       end
 
       it "should be possible to send in options to the proc" do
-        Person.should_receive(:all).with(hash_including(:limit => 10, :starts_with => proxy_owner.friends_records_starts_from_id))
+        expect(Person).to receive(:all).with(hash_including(:limit => 10, :starts_with => proxy_owner.friends_records_starts_from_id))
         find_with_proc.call(proxy_owner, {:limit => 10})
       end
     end

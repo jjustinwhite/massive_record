@@ -6,65 +6,65 @@ describe "persistence" do
     include MockMassiveRecordConnection
 
     it "should be a new record when calling new" do
-      TestClass.new.should be_new_record
+      expect(TestClass.new).to be_new_record
     end
 
     it "should not be persisted when new record" do
-      TestClass.new.should_not be_persisted
+      expect(TestClass.new).not_to be_persisted
     end
 
     it "should be persisted if saved" do
       model = TestClass.new "id1"
       model.save
-      model.should be_persisted
+      expect(model).to be_persisted
     end
 
     it "is still a new record if saved to database failed" do
-      operation = mock(Object, :execute => false)
-      MassiveRecord::ORM::Persistence::Operations.should_receive(:insert).and_return(operation)
+      operation = double(Object, :execute => false)
+      expect(MassiveRecord::ORM::Persistence::Operations).to receive(:insert).and_return(operation)
 
       model = TestClass.new "id1"
       model.save
-      model.should_not be_persisted
+      expect(model).not_to be_persisted
     end
 
     it "should be destroyed when destroyed" do
       model = TestClass.new "id1"
       model.save
       model.destroy
-      model.should be_destroyed
+      expect(model).to be_destroyed
     end
 
     it "should not be persisted if destroyed" do
       model = TestClass.new "id1"
       model.save
       model.destroy
-      model.should_not be_persisted
+      expect(model).not_to be_persisted
     end
 
     it "should not be marked as destroyed if operation failed" do
-      operation = mock(Object, :execute => false)
-      MassiveRecord::ORM::Persistence::Operations.should_receive(:destroy).and_return(operation)
+      operation = double(Object, :execute => false)
+      expect(MassiveRecord::ORM::Persistence::Operations).to receive(:destroy).and_return(operation)
 
       model = TestClass.new "id1"
       model.save
       model.destroy
-      model.should_not be_destroyed
-      model.should_not be_frozen
+      expect(model).not_to be_destroyed
+      expect(model).not_to be_frozen
     end
 
     it "should be possible to create new objects" do
-      TestClass.create("id1").should be_persisted
+      expect(TestClass.create("id1")).to be_persisted
     end
 
     it "should raise an error if validation fails on save!" do
       model = TestClass.new
-      model.should_receive(:create_or_update).and_return(false)
-      lambda { model.save! }.should raise_error MassiveRecord::ORM::RecordNotSaved
+      expect(model).to receive(:create_or_update).and_return(false)
+      expect { model.save! }.to raise_error MassiveRecord::ORM::RecordNotSaved
     end
 
     it "should respond to reload" do
-      TestClass.new.should respond_to :reload
+      expect(TestClass.new).to respond_to :reload
     end
   end
   
@@ -81,29 +81,29 @@ describe "persistence" do
       original_name = @person.name
       @person.name = original_name + original_name
       @person.reload
-      @person.name.should == original_name
+      expect(@person.name).to eq(original_name)
     end
 
     it "should reload the raw data" do
       @person.name += "_NEW"
       @person.save!
       @person.reload
-      @person.raw_data.should eq Person.find("ID1").raw_data
+      expect(@person.raw_data).to eq Person.find("ID1").raw_data
     end
 
     it "should not be considered changed after reload" do
       original_name = @person.name
       @person.name = original_name + original_name
       @person.reload
-      @person.should_not be_changed
+      expect(@person).not_to be_changed
     end
 
     it "should return self" do
-      @person.reload.should == @person
+      expect(@person.reload).to eq(@person)
     end
 
     it "should not do anything on reload when record is not persisted" do
-      Person.should_not_receive :find
+      expect(Person).not_to receive :find
       Person.new.reload
     end
   end
@@ -118,11 +118,11 @@ describe "persistence" do
       end
 
       it "should update given attriubte when valid" do
-        @person.update_attribute(:name, "new").should be_true
+        expect(@person.update_attribute(:name, "new")).to be_true
       end
 
       it "should update given attribute when invalid" do
-        @person.update_attribute(:name, nil).should be_true
+        expect(@person.update_attribute(:name, nil)).to be_true
       end
     end
   end
@@ -136,15 +136,15 @@ describe "persistence" do
       end
 
       it "should update given attriubtes when valid" do
-        @person.update_attributes(:name => "new", :age => "66").should be_true
+        expect(@person.update_attributes(:name => "new", :age => "66")).to be_true
       end
 
       it "should not update given attributes when one is invalid" do
-        @person.update_attributes(:name => nil, :age => "66").should be_false
+        expect(@person.update_attributes(:name => nil, :age => "66")).to be_false
       end
 
       it "should raise error when called with a bang" do
-        lambda { @person.update_attributes!(:name => nil, :age => "66") }.should raise_error MassiveRecord::ORM::RecordInvalid
+        expect { @person.update_attributes!(:name => nil, :age => "66") }.to raise_error MassiveRecord::ORM::RecordInvalid
       end
     end
   end
@@ -155,14 +155,14 @@ describe "persistence" do
       
       it "should delegate save to create if its a new record" do
         person = Person.new :name => "Bob", :age => 33
-        person.should_receive(:create)
+        expect(person).to receive(:create)
         person.save
       end
 
       it "should delegate save to update if its a persisted record" do
         person = Person.new '14', :name => "Bob", :age => 33
-        person.should_receive(:new_record?).any_number_of_times.and_return(false)
-        person.should_receive(:update)
+        allow(person).to receive(:new_record?).and_return(false)
+        expect(person).to receive(:update)
         person.save
       end
     end
@@ -195,22 +195,22 @@ describe "persistence" do
 
 
           it "it should not exists" do
-            @connection.tables.should_not include @new_class.table_name
+            expect(@connection.tables).not_to include @new_class.table_name
           end
 
           it "should create the table" do
             @new_instance.save
-            @connection.tables.should include @new_class.table_name
+            expect(@connection.tables).to include @new_class.table_name
           end
 
           it "should create correct column families" do
             @new_instance.save
-            @new_class.table.fetch_column_families.collect(&:name).should include "bar", "empty_family"
+            expect(@new_class.table.fetch_column_families.collect(&:name)).to include "bar", "empty_family"
           end
 
           it "should store the new instance" do
             @new_instance.save
-            @new_class.find(@new_instance.id).should == @new_instance
+            expect(@new_class.find(@new_instance.id)).to eq(@new_instance)
           end
         end
 
@@ -222,8 +222,8 @@ describe "persistence" do
             person = Person.new "new_id", :name => "Thorbjorn", :age => "22"
             person.save!
             person_from_db = Person.find(person.id)
-            person_from_db.should == person
-            person_from_db.name.should == "Thorbjorn"
+            expect(person_from_db).to eq(person)
+            expect(person_from_db.name).to eq("Thorbjorn")
           end
 
           it "creates persists embedded documents" do
@@ -232,7 +232,7 @@ describe "persistence" do
             person.addresses << address
             person.save!
             person_from_db = Person.find(person.id)
-            person_from_db.addresses.should eq [address]
+            expect(person_from_db.addresses).to eq [address]
           end
         end
 
@@ -245,7 +245,7 @@ describe "persistence" do
             Person.create! "foo", :name => "Anders", :age => "22"
           }.to raise_error MassiveRecord::ORM::RecordNotUnique
 
-          Person.find("foo").name.should eq "Thorbjorn"
+          expect(Person.find("foo").name).to eq "Thorbjorn"
           
           Person.check_record_uniqueness_on_create = check_was
         end
@@ -256,7 +256,7 @@ describe "persistence" do
 
           Person.create! "foo", :name => "Thorbjorn", :age => "22"
           Person.create! "foo", :name => "Anders", :age => "22" # This will result in an "update"
-          Person.find("foo").name.should eq "Anders"
+          expect(Person.find("foo").name).to eq "Anders"
 
           Person.check_record_uniqueness_on_create = check_was
         end
@@ -272,14 +272,14 @@ describe "persistence" do
         end
 
         it "should not ask for row for record when no changes have been made (update is done through this object)" do
-          @person.should_not_receive(:row_for_record)
+          expect(@person).not_to receive(:row_for_record)
           @person.save
         end
 
         it "should only include changed attributes" do
-          MassiveRecord::ORM::Persistence::Operations.should_receive(:update).with(
+          expect(MassiveRecord::ORM::Persistence::Operations).to receive(:update).with(
             @person, hash_including(:attribute_names_to_update => ["positive_as_default", "name"])
-          ).and_return(mock(Object, :execute => true))
+          ).and_return(double(Object, :execute => true))
 
 
           @person.name = @new_name
@@ -287,9 +287,9 @@ describe "persistence" do
         end
 
         it "should include changed attributes for embedded objects" do
-          MassiveRecord::ORM::Persistence::Operations.should_receive(:update).with(
+          expect(MassiveRecord::ORM::Persistence::Operations).to receive(:update).with(
             @person, hash_including(:attribute_names_to_update => ["positive_as_default", "name", "addresses"])
-          ).and_return(mock(Object, :execute => true))
+          ).and_return(double(Object, :execute => true))
 
           # Makes the reload raw data do nothing. Reason for this is as follows:
           # We are stubbing out the update operaitons, thus no address are being
@@ -299,7 +299,7 @@ describe "persistence" do
           # When that is being done, and no data is found it will return nil back (Thrift
           # api does this). This will in turn result in a record not found error, which is
           # kinda not what we want.
-          @person.addresses.should_receive(:reload_raw_data).any_number_of_times
+          allow(@person.addresses).to receive(:reload_raw_data)
 
           @person.name = @new_name
           @person.addresses << Address.new("id1", :street => "foo")
@@ -309,7 +309,7 @@ describe "persistence" do
           @person.name = @new_name
           @person.save
 
-          Person.find(@person.id).name.should == @new_name
+          expect(Person.find(@person.id).name).to eq(@new_name)
         end
 
         it "persists changes in embedded documents" do
@@ -322,19 +322,19 @@ describe "persistence" do
           @person_from_db.save!
 
           @person_from_db = Person.find(@person.id)
-          @person_from_db.addresses[0].street.should eq "Heggedal"
+          expect(@person_from_db.addresses[0].street).to eq "Heggedal"
         end
 
         it "should not have any changes after save" do
           @person.name = @new_name
           @person.save
-          @person.should_not be_changed
+          expect(@person).not_to be_changed
         end
 
         it "has no changes after an embedded object is added and saved" do
           @person.addresses << Address.new("address-1", :street => "Asker", :number => 1)
           @person.save
-          @person.should_not be_changed
+          expect(@person).not_to be_changed
         end
 
         it "should raise error if column familiy needed does not exist" do
@@ -365,40 +365,40 @@ describe "persistence" do
       let(:operation) { MassiveRecord::ORM::Persistence::Operations::Destroy.new(person) }
 
       before do
-        person.stub(:new_record?).and_return(false)
-        MassiveRecord::ORM::Persistence::Operations.stub(:destroy).and_return operation
+        allow(person).to receive(:new_record?).and_return(false)
+        allow(MassiveRecord::ORM::Persistence::Operations).to receive(:destroy).and_return operation
       end
 
 
       it "should not be destroyed if wrapper returns false" do
-        operation.should_receive(:execute).and_return false
+        expect(operation).to receive(:execute).and_return false
         person.destroy
-        person.should_not be_destroyed
+        expect(person).not_to be_destroyed
       end
 
       it "should be destroyed if wrapper returns true" do
         person.destroy
-        person.should be_destroyed
+        expect(person).to be_destroyed
       end
 
       it "returns destroyed record" do
-        person.destroy.should eq person
+        expect(person.destroy).to eq person
       end
 
       it "should be frozen after destroy" do
         person.destroy
-        person.should be_frozen
+        expect(person).to be_frozen
       end
 
       it "should be frozen after delete" do
         person.delete
-        person.should be_frozen
+        expect(person).to be_frozen
       end
       
       it "should not be frozen if wrapper returns false" do
-        operation.should_receive(:execute).and_return false
+        expect(operation).to receive(:execute).and_return false
         person.destroy
-        person.should_not be_frozen
+        expect(person).not_to be_frozen
       end
     end
 
@@ -412,14 +412,14 @@ describe "persistence" do
 
       it "should be removed by destroy" do
         @person.destroy
-        @person.should be_destroyed
-        Person.all.length.should == 0
+        expect(@person).to be_destroyed
+        expect(Person.all.length).to eq(0)
       end
 
       it "should be removed by delete" do
         @person.delete
-        @person.should be_destroyed
-        Person.all.length.should == 0
+        expect(@person).to be_destroyed
+        expect(Person.all.length).to eq(0)
       end
       
       it "should be able to call destroy on new records" do
@@ -431,17 +431,17 @@ describe "persistence" do
         it "should remove all when calling remove_all" do
           Person.create! "id2", :name => "Going to die :-(", :age => 99
           Person.destroy_all
-          Person.all.length.should == 0
+          expect(Person.all.length).to eq(0)
         end
 
         it "should return an array of all removed objects" do
-          Person.destroy_all.should == [@person]
+          expect(Person.destroy_all).to eq([@person])
         end
 
         it "should destroy all even if it is above 10 rows (obviously)" do
           15.times { |i| Person.create! "id-#{i}", :name => "Going to die :-(", :age => i + 20 }
           Person.destroy_all
-          Person.all.length.should == 0
+          expect(Person.all.length).to eq(0)
         end
       end
     end
@@ -459,27 +459,27 @@ describe "persistence" do
 
       it "should being able to increment age" do
         @person.increment(:age)
-        @person.age.should == 30
+        expect(@person.age).to eq(30)
       end
 
       it "should be able to increment age by given value" do
         @person.increment(:age, 2)
-        @person.age.should == 31
+        expect(@person.age).to eq(31)
       end
 
       it "should return object self" do
-        @person.increment(:age, 2).should == @person
+        expect(@person.increment(:age, 2)).to eq(@person)
       end
 
       it "should support increment values which currently are nil" do
         @person.age = nil
         @person.increment(:age)
-        @person.age.should == 1
+        expect(@person.age).to eq(1)
       end
 
       it "should complain if users tries to increment non-integer fields" do
         @person.name = nil
-        lambda { @person.increment(:name) }.should raise_error MassiveRecord::ORM::NotNumericalFieldError
+        expect { @person.increment(:name) }.to raise_error MassiveRecord::ORM::NotNumericalFieldError
       end
     end
 
@@ -492,33 +492,33 @@ describe "persistence" do
       end
 
       it "should delegate it's call to increment" do
-        @person.should_receive(:increment).with(:age, 1).and_return(@person)
+        expect(@person).to receive(:increment).with(:age, 1).and_return(@person)
         @person.increment! :age
       end
 
       it "should update object in database when called with a bang" do
         @person.increment! :age
         @person.reload
-        @person.age.should == 30
+        expect(@person.age).to eq(30)
       end
 
 
       describe "atomic increments" do
         it "raises error if called on non integer fields" do
-          lambda { @person.atomic_increment!(:name) }.should raise_error MassiveRecord::ORM::NotNumericalFieldError
+          expect { @person.atomic_increment!(:name) }.to raise_error MassiveRecord::ORM::NotNumericalFieldError
         end
 
         it "should be able to do atomic increments on existing objects" do
-          @person.atomic_increment!(:age).should == 30
-          @person.age.should == 30
+          expect(@person.atomic_increment!(:age)).to eq(30)
+          expect(@person.age).to eq(30)
           @person.reload
-          @person.age.should == 30
+          expect(@person.age).to eq(30)
         end
 
         it "is a persisted record after incrementation" do
           person = Person.new('id2')
-          person.atomic_increment!(:age).should eq 1
-          person.should be_persisted
+          expect(person.atomic_increment!(:age)).to eq 1
+          expect(person).to be_persisted
         end
 
         it "increments correctly when value is '1'" do
@@ -526,7 +526,7 @@ describe "persistence" do
           MassiveRecord::ORM::Base.backward_compatibility_integers_might_be_persisted_as_strings = true
 
           person = Person.new('id2')
-          person.atomic_increment!(:age).should eq 1
+          expect(person.atomic_increment!(:age)).to eq 1
 
           atomic_field = Person.attributes_schema['age']
 
@@ -540,7 +540,7 @@ describe "persistence" do
             row.save
           end
 
-          person.atomic_increment!(:age).should eq 2
+          expect(person.atomic_increment!(:age)).to eq 2
 
           MassiveRecord::ORM::Base.backward_compatibility_integers_might_be_persisted_as_strings = old_ensure
         end
@@ -548,20 +548,20 @@ describe "persistence" do
 
       describe "atomic decrements" do
         it "raises error if called on non integer fields" do
-          lambda { @person.atomic_decrement!(:name) }.should raise_error MassiveRecord::ORM::NotNumericalFieldError
+          expect { @person.atomic_decrement!(:name) }.to raise_error MassiveRecord::ORM::NotNumericalFieldError
         end
 
         it "should be able to do atomic decrements on existing objects" do
-          @person.atomic_decrement!(:age).should == 28
-          @person.age.should == 28
+          expect(@person.atomic_decrement!(:age)).to eq(28)
+          expect(@person.age).to eq(28)
           @person.reload
-          @person.age.should == 28
+          expect(@person.age).to eq(28)
         end
 
         it "is a persisted record after decrementation" do
           person = Person.new('id2')
-          person.atomic_decrement!(:age).should eq -1
-          person.should be_persisted
+          expect(person.atomic_decrement!(:age)).to eq -1
+          expect(person).to be_persisted
         end
 
         it "decrementss correctly when value is '1'" do
@@ -569,7 +569,7 @@ describe "persistence" do
           MassiveRecord::ORM::Base.backward_compatibility_integers_might_be_persisted_as_strings = true
 
           person = Person.new('id2')
-          person.atomic_increment!(:age).should eq 1
+          expect(person.atomic_increment!(:age)).to eq 1
 
           atomic_field = Person.attributes_schema['age']
 
@@ -583,7 +583,7 @@ describe "persistence" do
             row.save
           end
 
-          person.atomic_decrement!(:age).should eq 0
+          expect(person.atomic_decrement!(:age)).to eq 0
 
           MassiveRecord::ORM::Base.backward_compatibility_integers_might_be_persisted_as_strings = old_ensure
         end
@@ -601,27 +601,27 @@ describe "persistence" do
 
       it "should being able to decrement age" do
         @person.decrement(:age)
-        @person.age.should == 28
+        expect(@person.age).to eq(28)
       end
 
       it "should be able to decrement age by given value" do
         @person.decrement(:age, 2)
-        @person.age.should == 27
+        expect(@person.age).to eq(27)
       end
 
       it "should return object self" do
-        @person.decrement(:age, 2).should == @person
+        expect(@person.decrement(:age, 2)).to eq(@person)
       end
 
       it "should support decrement values which currently are nil" do
         @person.age = nil
         @person.decrement(:age)
-        @person.age.should == -1
+        expect(@person.age).to eq(-1)
       end
 
       it "should complain if users tries to decrement non-integer fields" do
         @person.name = nil
-        lambda { @person.decrement(:name) }.should raise_error MassiveRecord::ORM::NotNumericalFieldError
+        expect { @person.decrement(:name) }.to raise_error MassiveRecord::ORM::NotNumericalFieldError
       end
     end
 
@@ -634,14 +634,14 @@ describe "persistence" do
       end
 
       it "should delegate it's call to decrement" do
-        @person.should_receive(:decrement).with(:age, 1).and_return(@person)
+        expect(@person).to receive(:decrement).with(:age, 1).and_return(@person)
         @person.decrement! :age
       end
 
       it "should update object in database when called with a bang" do
         @person.decrement! :age
         @person.reload
-        @person.age.should == 28
+        expect(@person.age).to eq(28)
       end
     end
   end
@@ -652,15 +652,15 @@ describe "persistence" do
     it "should raise an error if new record is read only and you try to save it" do
       person = Person.new "id1", :name => "Thorbjorn", :age => 29
       person.readonly!
-      lambda { person.save }.should raise_error MassiveRecord::ORM::ReadOnlyRecord
+      expect { person.save }.to raise_error MassiveRecord::ORM::ReadOnlyRecord
     end
 
     it "should raise an error if record is read only and you try to save it" do
       person = Person.create "id1", :name => "Thorbjorn", :age => 29
-      person.should be_persisted
+      expect(person).to be_persisted
 
       person.readonly!
-      lambda { person.save }.should raise_error MassiveRecord::ORM::ReadOnlyRecord
+      expect { person.save }.to raise_error MassiveRecord::ORM::ReadOnlyRecord
     end
   end
 
@@ -674,7 +674,7 @@ describe "persistence" do
       person.save!
 
       person.reload
-      person.id.should == "1"
+      expect(person.id).to eq("1")
     end
   end
 
@@ -700,7 +700,7 @@ describe "persistence" do
         subject.save!
 
         raw_values = Person.table.find(subject.id).values
-        raw_values[subject.attributes_schema[attr].unique_name].should be_nil
+        expect(raw_values[subject.attributes_schema[attr].unique_name]).to be_nil
       end
     end
   end

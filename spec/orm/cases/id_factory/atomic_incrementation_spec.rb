@@ -11,7 +11,7 @@ describe MassiveRecord::ORM::IdFactory::AtomicIncrementation do
 
 
   it "has table name equal to id_factories" do
-    described_class.table_name.should eq "id_factories_test"
+    expect(described_class.table_name).to eq "id_factories_test"
   end
 
   describe "#next_for" do
@@ -20,29 +20,29 @@ describe MassiveRecord::ORM::IdFactory::AtomicIncrementation do
     end
 
     it "should increment start a new sequence on 1" do
-      subject.next_for(Person).should == 1
+      expect(subject.next_for(Person)).to eq(1)
     end
 
     it "should increment value one by one" do
       5.times do |index|
         expected_id = index + 1
-        subject.next_for(Person).should == expected_id
+        expect(subject.next_for(Person)).to eq(expected_id)
       end
     end
 
     it "should maintain ids separate for each table" do
       3.times { subject.next_for(Person) }
-      subject.next_for("cars").should == 1
+      expect(subject.next_for("cars")).to eq(1)
     end
 
     it "autoload ids as integers" do
-      subject.next_for(Person).should eq 1
+      expect(subject.next_for(Person)).to eq 1
 
       family_for_person = subject.class.column_families.family_by_name(MassiveRecord::ORM::IdFactory::AtomicIncrementation::COLUMN_FAMILY_FOR_TABLES)
       field_for_person = family_for_person.fields.delete_if { |f| f.name == Person.table_name }
 
       subject.reload
-      subject.attributes_schema[Person.table_name].type.should eq :integer
+      expect(subject.attributes_schema[Person.table_name].type).to eq :integer
     end
 
 
@@ -63,7 +63,7 @@ describe MassiveRecord::ORM::IdFactory::AtomicIncrementation do
           row.save
         end
 
-        subject.next_for(Person).should eq 2
+        expect(subject.next_for(Person)).to eq 2
 
         MassiveRecord::ORM::Base.backward_compatibility_integers_might_be_persisted_as_strings = old_ensure
       end

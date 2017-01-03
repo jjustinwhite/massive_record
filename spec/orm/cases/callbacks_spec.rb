@@ -62,7 +62,7 @@ describe "callbacks on" do
         describe "save callbacks" do
           it "runs in correct order" do
             owner_new_record.save
-            subject.history.should eq [
+            expect(subject.history).to eq [
               [:after_initialize, :method],
               [:after_initialize, :string],
               [:after_initialize, :proc  ],
@@ -112,7 +112,7 @@ describe "callbacks on" do
             subject.name += "_NEW"
             subject.history.clear
             owner.save
-            subject.history.should eq [
+            expect(subject.history).to eq [
               [:before_validation, :method],
               [:before_validation, :string],
               [:before_validation, :proc  ],

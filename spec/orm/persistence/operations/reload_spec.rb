@@ -14,29 +14,35 @@ describe MassiveRecord::ORM::Persistence::Operations::Reload do
 
   describe "#execute" do
     context "new record" do
-      before { record.stub(:persisted?).and_return false }
+      before { allow(record).to receive(:persisted?).and_return false }
 
-      its(:execute) { should be_false }
+      describe '#execute' do
+        subject { super().execute }
+        it { should be_false }
+      end
 
       it "does no find" do
-        subject.klass.should_not_receive(:find)
+        expect(subject.klass).not_to receive(:find)
         subject.execute
       end
     end
 
     context "persisted" do
-      its(:execute) { should be_true }
+      describe '#execute' do
+        subject { super().execute }
+        it { should be_true }
+      end
 
       it "asks class to find it's id" do
-        subject.klass.should_receive(:find).with(record.id).and_return(record)
+        expect(subject.klass).to receive(:find).with(record.id).and_return(record)
         subject.execute
       end
 
       it "reinit record with found record's attributes and raw_data" do
-        subject.klass.should_receive(:find).with(record.id).and_return(record)
-        record.should_receive(:attributes).and_return('attributes' => {})
-        record.should_receive(:raw_data).and_return('raw_data' => {})
-        record.should_receive(:reinit_with).with({
+        expect(subject.klass).to receive(:find).with(record.id).and_return(record)
+        expect(record).to receive(:attributes).and_return('attributes' => {})
+        expect(record).to receive(:raw_data).and_return('raw_data' => {})
+        expect(record).to receive(:reinit_with).with({
           'attributes' => {'attributes' => {}},
           'raw_data' => {'raw_data' => {}}
         })

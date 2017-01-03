@@ -6,7 +6,7 @@ describe "Retryable" do
 
   describe "defaults" do
     it "should default the exception to retry to ::Apache::Hadoop::Hbase::Thrift::IOError" do
-      retryable.exception_to_retry.should == ::Apache::Hadoop::Hbase::Thrift::IOError
+      expect(retryable.exception_to_retry).to eq(::Apache::Hadoop::Hbase::Thrift::IOError)
     end
   end
   

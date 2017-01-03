@@ -33,8 +33,8 @@ module MassiveRecord
 
             it "returns a row with id and table set" do
               row = subject.row_for_record
-              row.id.should eq person.id
-              row.table.should eq person.class.table
+              expect(row.id).to eq person.id
+              expect(row.table).to eq person.class.table
             end
           end
 
@@ -42,31 +42,31 @@ module MassiveRecord
             before { person.addresses.parent_will_be_saved! }
 
             it "should include the 'pts' field in the database which has 'points' as an alias" do
-              subject.attributes_to_row_values_hash["base"].keys.should include("pts")
-              subject.attributes_to_row_values_hash["base"].keys.should_not include("points")
+              expect(subject.attributes_to_row_values_hash["base"].keys).to include("pts")
+              expect(subject.attributes_to_row_values_hash["base"].keys).not_to include("points")
             end
 
             it "should include integer value, even if it is set as string" do
               person.age = "20"
-              subject.attributes_to_row_values_hash["info"]["age"].should == 20
+              expect(subject.attributes_to_row_values_hash["info"]["age"]).to eq(20)
             end
 
             describe "embedded attributes" do
               it "includes the column family for the embedded relation" do
-                subject.attributes_to_row_values_hash.keys.should include "addresses"
+                expect(subject.attributes_to_row_values_hash.keys).to include "addresses"
               end
 
               it "asks the proxy for update hash and uses whatever it delivers" do
                 dummy_hash = {:foo => {:bar => :dummy}}
-                person.addresses.should_receive(:proxy_targets_update_hash).any_number_of_times.and_return(dummy_hash)
-                subject.attributes_to_row_values_hash["addresses"].should eq dummy_hash
+                allow(person.addresses).to receive(:proxy_targets_update_hash).and_return(dummy_hash)
+                expect(subject.attributes_to_row_values_hash["addresses"]).to eq dummy_hash
               end
 
               it "merges embedded collections in to existing column families" do
                 attributes_from_person = subject.attributes_to_row_values_hash["info"]
                 attributes_from_cars = {:foo => {:bar => :dummy}}
-                person.cars.should_receive(:proxy_targets_update_hash).any_number_of_times.and_return(attributes_from_cars)
-                subject.attributes_to_row_values_hash["info"].should eq attributes_from_person.merge(attributes_from_cars)
+                allow(person.cars).to receive(:proxy_targets_update_hash).and_return(attributes_from_cars)
+                expect(subject.attributes_to_row_values_hash["info"]).to eq attributes_from_person.merge(attributes_from_cars)
               end
             end
           end
@@ -74,17 +74,17 @@ module MassiveRecord
 
 
           describe "#store_record_to_database" do
-            let(:row) { mock(Object, :save => true, :values= => true) }
+            let(:row) { double(Object, :save => true, :values= => true) }
 
-            before { subject.should_receive(:row_for_record).and_return(row) }
+            before { expect(subject).to receive(:row_for_record).and_return(row) }
 
             it "assigns row it's values from what attributes_to_row_values_hash returns" do
-              row.should_receive(:values=).with(subject.attributes_to_row_values_hash)
+              expect(row).to receive(:values=).with(subject.attributes_to_row_values_hash)
               subject.store_record_to_database('create')
             end
 
             it "calls save on the row" do
-              row.should_receive(:save)
+              expect(row).to receive(:save)
               subject.store_record_to_database('create')
             end
           end

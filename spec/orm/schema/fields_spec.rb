@@ -6,7 +6,7 @@ describe MassiveRecord::ORM::Schema::Fields do
   end
 
   it "should be a kind of set" do
-    @fields.should be_a_kind_of Set
+    expect(@fields).to be_a_kind_of Set
   end
 
   describe "add fields to the set" do
@@ -17,17 +17,17 @@ describe MassiveRecord::ORM::Schema::Fields do
     it "should add self to field's fields attribute" do
       field = MassiveRecord::ORM::Schema::Field.new(:name => :field)
       @fields << field
-      field.fields.should == @fields
+      expect(field.fields).to eq(@fields)
     end
 
     it "should not be possible to add two fields with the same name" do
       @fields << MassiveRecord::ORM::Schema::Field.new(:name => "attr")
-      @fields.add?(MassiveRecord::ORM::Schema::Field.new(:name => "attr")).should be_nil
+      expect(@fields.add?(MassiveRecord::ORM::Schema::Field.new(:name => "attr"))).to be_nil
     end
 
     it "should raise error if invalid column familiy is added" do
       invalid_field = MassiveRecord::ORM::Schema::Field.new
-      lambda { @fields << invalid_field }.should raise_error MassiveRecord::ORM::Schema::InvalidField
+      expect { @fields << invalid_field }.to raise_error MassiveRecord::ORM::Schema::InvalidField
     end
   end
 
@@ -40,12 +40,12 @@ describe MassiveRecord::ORM::Schema::Fields do
 
     it "should return nil if no fields are added" do
       @fields.clear
-      @fields.to_hash.should == {}
+      expect(@fields.to_hash).to eq({})
     end
 
     it "should contain added fields" do
-      @fields.to_hash.should include("name" => @name_field)
-      @fields.to_hash.should include("phone" => @phone_field)
+      expect(@fields.to_hash).to include("name" => @name_field)
+      expect(@fields.to_hash).to include("phone" => @phone_field)
     end
   end
 
@@ -58,11 +58,11 @@ describe MassiveRecord::ORM::Schema::Fields do
 
     it "should return nil if no fields are added" do
       @fields.clear
-      @fields.attribute_names.should == []
+      expect(@fields.attribute_names).to eq([])
     end
 
     it "should contain added fields" do
-      @fields.attribute_names.should include("name", "phone")
+      expect(@fields.attribute_names).to include("name", "phone")
     end
   end
 
@@ -75,15 +75,15 @@ describe MassiveRecord::ORM::Schema::Fields do
 
     describe "with no contained_in" do
       it "should return true if name is taken" do
-        @fields.attribute_name_taken?("phone").should be_true
+        expect(@fields.attribute_name_taken?("phone")).to be_true
       end
 
       it "should accept and return true if name, given as a symbol, is taken" do
-        @fields.attribute_name_taken?(:phone).should be_true
+        expect(@fields.attribute_name_taken?(:phone)).to be_true
       end
 
       it "should return false if name is not taken" do
-        @fields.attribute_name_taken?("not_taken").should be_false
+        expect(@fields.attribute_name_taken?("not_taken")).to be_false
       end
     end
 
@@ -93,13 +93,13 @@ describe MassiveRecord::ORM::Schema::Fields do
       end
 
       it "should ask object it is contained in for the truth about if attribute name is taken" do
-        @fields.contained_in.should_receive(:attribute_name_taken?).and_return true
-        @fields.attribute_name_taken?(:foo).should be_true
+        expect(@fields.contained_in).to receive(:attribute_name_taken?).and_return true
+        expect(@fields.attribute_name_taken?(:foo)).to be_true
       end
 
       it "should not ask object it is contained in if asked not to" do
-        @fields.contained_in.should_not_receive(:attribute_name_taken?)
-        @fields.attribute_name_taken?(:foo, true).should be_false
+        expect(@fields.contained_in).not_to receive(:attribute_name_taken?)
+        expect(@fields.attribute_name_taken?(:foo, true)).to be_false
       end
     end
   end
@@ -112,15 +112,15 @@ describe MassiveRecord::ORM::Schema::Fields do
     end
 
     it "should return nil if nothing is found" do
-      @fields.field_by_name("unkown").should be_nil
+      expect(@fields.field_by_name("unkown")).to be_nil
     end
 
     it "should return found field" do
-      @fields.field_by_name("name").should == @name_field
+      expect(@fields.field_by_name("name")).to eq(@name_field)
     end
 
     it "should return found field given as symbol" do
-      @fields.field_by_name(:name).should == @name_field
+      expect(@fields.field_by_name(:name)).to eq(@name_field)
     end
   end
 end

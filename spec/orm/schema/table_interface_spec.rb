@@ -15,11 +15,11 @@ describe MassiveRecord::ORM::Schema::TableInterface do
 
 
   it "should respond_to column_family" do
-    TestInterface.should respond_to :column_family
+    expect(TestInterface).to respond_to :column_family
   end
 
   it "should respond_to column_families" do
-    TestInterface.should respond_to :column_families
+    expect(TestInterface).to respond_to :column_families
   end
 
   it "should be possible to add column familiy through DSL" do
@@ -27,12 +27,12 @@ describe MassiveRecord::ORM::Schema::TableInterface do
       column_family :misc do; end
     end
 
-    TestInterface.column_families.collect(&:name).should include("misc")
+    expect(TestInterface.column_families.collect(&:name)).to include("misc")
   end
 
   it "adds a column family" do
     TestInterface.add_column_family(:foo)
-    TestInterface.column_families.collect(&:name).should include("foo")
+    expect(TestInterface.column_families.collect(&:name)).to include("foo")
   end
 
   it "should be possible to add fields to a column families" do
@@ -42,7 +42,7 @@ describe MassiveRecord::ORM::Schema::TableInterface do
       end
     end
 
-    TestInterface.known_attribute_names.should == ["name"]
+    expect(TestInterface.known_attribute_names).to eq(["name"])
   end
 
   it "should return a list of known collum families" do
@@ -52,11 +52,11 @@ describe MassiveRecord::ORM::Schema::TableInterface do
       end
     end
 
-    TestInterface.known_column_family_names.should == ["info"]
+    expect(TestInterface.known_column_family_names).to eq(["info"])
   end
 
   it "returns no known column family names if no one are defined" do
-    TestInterface.known_column_family_names.should == []
+    expect(TestInterface.known_column_family_names).to eq([])
   end
 
   it "should return attributes schema based on DSL" do
@@ -67,20 +67,20 @@ describe MassiveRecord::ORM::Schema::TableInterface do
       end
     end
 
-    TestInterface.attributes_schema["name"].type.should == :string
-    TestInterface.attributes_schema["age"].type.should == :integer
-    TestInterface.attributes_schema["age"].default.should == 1
+    expect(TestInterface.attributes_schema["name"].type).to eq(:string)
+    expect(TestInterface.attributes_schema["age"].type).to eq(:integer)
+    expect(TestInterface.attributes_schema["age"].default).to eq(1)
   end
 
   it "should raise an error if you try to add same field name twice" do
-    lambda { 
+    expect { 
       class TestInterface
         column_family :info do
           field :name
           field :name
         end
       end
-    }.should raise_error MassiveRecord::ORM::Schema::InvalidField
+    }.to raise_error MassiveRecord::ORM::Schema::InvalidField
   end
 
   it "should give us default attributes from schema" do
@@ -92,8 +92,8 @@ describe MassiveRecord::ORM::Schema::TableInterface do
     end
 
     defaults = TestInterface.default_attributes_from_schema
-    defaults["name"].should be_nil
-    defaults["age"].should == 1
+    expect(defaults["name"]).to be_nil
+    expect(defaults["age"]).to eq(1)
   end
 
   it "should make attributes_schema readable from instances" do
@@ -103,7 +103,7 @@ describe MassiveRecord::ORM::Schema::TableInterface do
       end
     end
 
-    TestInterface.new.attributes_schema["name"].type.should == :string
+    expect(TestInterface.new.attributes_schema["name"].type).to eq(:string)
   end
 
   it "should make known_attribute_names readable for instances" do
@@ -113,7 +113,7 @@ describe MassiveRecord::ORM::Schema::TableInterface do
       end
     end
 
-    TestInterface.new.known_attribute_names.should include('name')
+    expect(TestInterface.new.known_attribute_names).to include('name')
   end
 
   it "should not be shared amonb subclasses" do
@@ -123,8 +123,8 @@ describe MassiveRecord::ORM::Schema::TableInterface do
       end
     end
 
-    TestInterface.column_families.should_not be_nil
-    TestInterfaceSubClass.column_families.should be_nil
+    expect(TestInterface.column_families).not_to be_nil
+    expect(TestInterfaceSubClass.column_families).to be_nil
   end
 
   describe "timestamps" do
@@ -137,7 +137,7 @@ describe MassiveRecord::ORM::Schema::TableInterface do
     end
 
     it "should have a created_at time field" do
-      TestInterface.attributes_schema['created_at'].type.should == :time
+      expect(TestInterface.attributes_schema['created_at'].type).to eq(:time)
     end
   end
 
@@ -146,36 +146,36 @@ describe MassiveRecord::ORM::Schema::TableInterface do
     it "should be possible to dynamically add a field" do
       TestInterface.add_field_to_column_family :info, :name, :default => "NA"
 
-      TestInterface.should have(1).column_families
+      expect(TestInterface.column_families.size).to eq(1)
 
       family = TestInterface.column_families.first
-      family.name.should == "info"
+      expect(family.name).to eq("info")
 
-      family.fields.first.name.should == "name"
-      family.fields.first.default.should == "NA"
+      expect(family.fields.first.name).to eq("name")
+      expect(family.fields.first.default).to eq("NA")
     end
 
     it "should be possible to set field's type just like the DSL" do
       TestInterface.add_field_to_column_family :info, :age, :integer, :default => 0
 
-      TestInterface.column_families.first.fields.first.name.should == "age"
-      TestInterface.column_families.first.fields.first.type.should == :integer
-      TestInterface.column_families.first.fields.first.default.should == 0
+      expect(TestInterface.column_families.first.fields.first.name).to eq("age")
+      expect(TestInterface.column_families.first.fields.first.type).to eq(:integer)
+      expect(TestInterface.column_families.first.fields.first.default).to eq(0)
     end
 
     it "should call class' undefine_attribute_methods to make sure it regenerates for newly added" do
-      TestInterface.should_receive(:undefine_attribute_methods)
+      expect(TestInterface).to receive(:undefine_attribute_methods)
       TestInterface.add_field_to_column_family :info, :name, :default => "NA"
     end
 
     it "should return the new field" do
       field = TestInterface.add_field_to_column_family :info, :age, :integer, :default => 0
-      field.should == TestInterface.column_families.first.fields.first
+      expect(field).to eq(TestInterface.column_families.first.fields.first)
     end
 
     it "should insert the new field's default value right away" do
       test_interface = TestInterface.new
-      test_interface.should_receive("age=").with(1)
+      expect(test_interface).to receive("age=").with(1)
       test_interface.add_field_to_column_family :info, :age, :integer, :default => 1
     end
   end
@@ -202,12 +202,12 @@ describe MassiveRecord::ORM::Schema::TableInterface do
     end
 
     it "should not add fields to misc" do
-      TestInterface.column_families.family_by_name("misc").should_not_receive(:add?)
+      expect(TestInterface.column_families.family_by_name("misc")).not_to receive(:add?)
       TestInterface.autoload_column_families_and_fields_with(@column_names)
     end
 
     it "should add fields to info" do
-      TestInterface.column_families.family_by_name("info").should_receive(:add?)
+      expect(TestInterface.column_families.family_by_name("info")).to receive(:add?)
       TestInterface.autoload_column_families_and_fields_with(@column_names)
     end
 
@@ -215,7 +215,7 @@ describe MassiveRecord::ORM::Schema::TableInterface do
       TestInterface.autoload_column_families_and_fields_with(@column_names)
       family = TestInterface.column_families.family_by_name("integers_only")
       autoloaded_field = family.field_by_name(:number)
-      autoloaded_field.type.should eq :integer
+      expect(autoloaded_field.type).to eq :integer
     end
 
     it "should be possible to run twice" do

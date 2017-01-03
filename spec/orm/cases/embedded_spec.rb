@@ -6,22 +6,22 @@ describe MassiveRecord::ORM::Embedded do
   let(:person) { Person.new "person-id", :name => "Thorbjorn", :age => "22" }
 
   it "should have known_attribute_names" do
-    Address.should have(4).known_attribute_names
-    Address.known_attribute_names.should include("street", "number", "nice_place")
+    expect(Address.known_attribute_names.size).to eq(4)
+    expect(Address.known_attribute_names).to include("street", "number", "nice_place")
   end
 
   it "should have default_attributes_from_schema" do
-    Address.default_attributes_from_schema["street"].should be_nil
-    Address.default_attributes_from_schema["number"].should be_nil
-    Address.default_attributes_from_schema["nice_place"].should be_true
+    expect(Address.default_attributes_from_schema["street"]).to be_nil
+    expect(Address.default_attributes_from_schema["number"]).to be_nil
+    expect(Address.default_attributes_from_schema["nice_place"]).to be_true
   end
 
   it "should have attributes_schema" do
-    Address.attributes_schema["street"].should be_instance_of MassiveRecord::ORM::Schema::Field
+    expect(Address.attributes_schema["street"]).to be_instance_of MassiveRecord::ORM::Schema::Field
   end
 
   it "should have a default value set" do
-    subject.nice_place.should be_true
+    expect(subject.nice_place).to be_true
   end
 
 
@@ -31,7 +31,7 @@ describe MassiveRecord::ORM::Embedded do
   describe "not be possible to persist (at least for now...)" do
     %w(first last all exists? destroy_all).each do |method|
       it "should not respond to class method #{method}" do
-        Address.should_not respond_to method
+        expect(Address).not_to respond_to method
       end
     end
 
@@ -41,7 +41,7 @@ describe MassiveRecord::ORM::Embedded do
       delete increment! decrement! atomic_increment! atomic_decrement!
     ).each do |method|
       it "do respond to #{method}" do
-        subject.should respond_to method
+        expect(subject).to respond_to method
       end
     end
   end
@@ -66,23 +66,23 @@ describe MassiveRecord::ORM::Embedded do
 
           it "gets assigned an id" do
             subject.save
-            subject.id.should_not be_blank
+            expect(subject.id).not_to be_blank
           end
 
           it "saves both embedded record and embedded in record" do
             subject.save
 
-            person.should be_persisted
-            subject.should be_persisted
+            expect(person).to be_persisted
+            expect(subject).to be_persisted
           end
 
           it "does nothing if validations fail on embedded" do
             subject.street = nil
             subject.save
-            subject.errors.should_not be_empty
+            expect(subject.errors).not_to be_empty
 
-            person.should_not be_persisted
-            subject.should_not be_persisted
+            expect(person).not_to be_persisted
+            expect(subject).not_to be_persisted
           end
 
           describe "validations fails on owner" do
@@ -90,12 +90,12 @@ describe MassiveRecord::ORM::Embedded do
 
             it "does not persist owner" do
               subject.save
-              person.should_not be_persisted
+              expect(person).not_to be_persisted
             end
 
             it "does not mark embedded as persisted" do
               subject.save
-              subject.should_not be_persisted
+              expect(subject).not_to be_persisted
             end
           end
         end
@@ -107,13 +107,13 @@ describe MassiveRecord::ORM::Embedded do
           end
 
           it "gets assigned an id" do
-            subject.id.should_not be_blank
+            expect(subject.id).not_to be_blank
           end
 
           it "persists address" do
             subject.street = "new_address"
             subject.save
-            person.reload.addresses.first.street.should eq "new_address"
+            expect(person.reload.addresses.first.street).to eq "new_address"
           end
 
           it "will not save changes in owner when embedded is saved" do
@@ -122,15 +122,15 @@ describe MassiveRecord::ORM::Embedded do
 
             subject.save
 
-            person.should be_name_changed
+            expect(person).to be_name_changed
           end
 
           it "does nothing if validations fail on embedded" do
             subject.street = nil
             subject.save
-            subject.errors.should_not be_empty
+            expect(subject.errors).not_to be_empty
 
-            subject.should be_changed
+            expect(subject).to be_changed
           end
 
           it "save even if validations fails on owner of collection embedded in" do
@@ -138,7 +138,7 @@ describe MassiveRecord::ORM::Embedded do
             subject.street += "_NEW"
             subject.save
 
-            subject.should_not be_changed
+            expect(subject).not_to be_changed
           end
         end
       end
@@ -151,7 +151,7 @@ describe MassiveRecord::ORM::Embedded do
         
         it "marks itself as destroyed" do
           subject.destroy
-          subject.should be_destroyed
+          expect(subject).to be_destroyed
         end
       end
 
@@ -161,7 +161,7 @@ describe MassiveRecord::ORM::Embedded do
 
           it "marks itself as destroyed" do
             subject.destroy
-            subject.should be_destroyed
+            expect(subject).to be_destroyed
           end
         end
 
@@ -173,17 +173,17 @@ describe MassiveRecord::ORM::Embedded do
 
           it "marks itself as destroyed" do
             subject.destroy
-            subject.should be_destroyed
+            expect(subject).to be_destroyed
           end
 
           it "is removed from embeds_many collection" do
             subject.destroy
-            person.addresses.should be_empty
+            expect(person.addresses).to be_empty
           end
 
           it "is actually removed from collection" do
             subject.destroy
-            person.reload.addresses.should be_empty
+            expect(person.reload.addresses).to be_empty
           end
         end
       end
@@ -196,19 +196,19 @@ describe MassiveRecord::ORM::Embedded do
 
     describe "assignment on first save" do
       it "has no id when first instantiated" do
-        subject.id.should be_nil
+        expect(subject.id).to be_nil
       end
 
       it "gets an id on explicit save" do
         subject.person = person
         subject.save
-        subject.id.should_not be_nil
+        expect(subject.id).not_to be_nil
       end
 
       it "gets an id when saved through persisted parent" do
         person.save
         person.addresses << subject
-        subject.id.should_not be_nil
+        expect(subject.id).not_to be_nil
       end
     end
 
@@ -217,26 +217,26 @@ describe MassiveRecord::ORM::Embedded do
 
       describe "reader" do
         it "has non when first instantiated" do
-          subject.database_id.should be_nil
+          expect(subject.database_id).to be_nil
         end
 
         it "gets one on explicit save" do
           subject.person = person
           subject.save
-          subject.database_id.should eq [base_class, subject.id].join(MassiveRecord::ORM::Embedded::DATABASE_ID_SEPARATOR)
+          expect(subject.database_id).to eq [base_class, subject.id].join(MassiveRecord::ORM::Embedded::DATABASE_ID_SEPARATOR)
         end
 
         it "gets one when saved through persisted parent" do
           person.save
           person.addresses << subject
-          subject.database_id.should eq [base_class, subject.id].join(MassiveRecord::ORM::Embedded::DATABASE_ID_SEPARATOR)
+          expect(subject.database_id).to eq [base_class, subject.id].join(MassiveRecord::ORM::Embedded::DATABASE_ID_SEPARATOR)
         end
       end
 
       describe "writer" do
         it "splits base_class and id and assigns id to id" do
           subject.database_id = "address#{MassiveRecord::ORM::Embedded::DATABASE_ID_SEPARATOR}166"
-          subject.id.should eq "166"
+          expect(subject.id).to eq "166"
         end
 
         it "raises an error if database id could not be parsed" do

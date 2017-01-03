@@ -13,9 +13,9 @@ describe MassiveRecord::ORM::Persistence::Operations::Destroy do
 
   describe "#execute" do
     it "asks row_for_record to destroy itself" do
-      row = mock(Object)
-      row.should_receive(:destroy).and_return true
-      subject.should_receive(:row_for_record).and_return(row) 
+      row = double(Object)
+      expect(row).to receive(:destroy).and_return true
+      expect(subject).to receive(:row_for_record).and_return(row) 
       subject.execute
     end
   end

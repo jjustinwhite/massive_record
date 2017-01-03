@@ -2,11 +2,11 @@ require 'spec_helper'
 
 shared_examples_for "a model with callbacks" do
   it "should include ActiveModel::Callbacks" do
-    described_class.should respond_to :define_model_callbacks
+    expect(described_class).to respond_to :define_model_callbacks
   end
 
   it "should include ActiveModell::Validations::Callback" do
-    described_class.included_modules.should include(ActiveModel::Validations::Callbacks)
+    expect(described_class.included_modules).to include(ActiveModel::Validations::Callbacks)
   end
 
   
@@ -14,7 +14,7 @@ shared_examples_for "a model with callbacks" do
   context "new record" do
     describe "initialize callbacks" do
       it "runs in correct order" do
-        subject.history.should eq [
+        expect(subject.history).to eq [
           [:after_initialize, :method],
           [:after_initialize, :string],
           [:after_initialize, :proc],
@@ -27,7 +27,7 @@ shared_examples_for "a model with callbacks" do
     describe "validations callback" do
       it "runs in correct order for new records" do
         subject.valid?
-        subject.history.should eq [
+        expect(subject.history).to eq [
           [:after_initialize, :method],
           [:after_initialize, :string],
           [:after_initialize, :proc],
@@ -51,7 +51,7 @@ shared_examples_for "a model with callbacks" do
       subject { created_record }
 
       it "runs in correct order" do
-        subject.history.should eq [
+        expect(subject.history).to eq [
           [:after_initialize, :method],
           [:after_initialize, :string],
           [:after_initialize, :proc  ],
@@ -96,7 +96,7 @@ shared_examples_for "a model with callbacks" do
 
       it "runs in correct order" do
         subject.save
-        subject.history.should eq [
+        expect(subject.history).to eq [
           [:after_initialize, :method],
           [:after_initialize, :string],
           [:after_initialize, :proc  ],
@@ -143,7 +143,7 @@ shared_examples_for "a model with callbacks" do
 
     describe "find callbacks" do
       it "runs in correct order" do
-        subject.history.should eq [
+        expect(subject.history).to eq [
           [:after_find, :method],
           [:after_find, :string],
           [:after_find, :proc],
@@ -162,7 +162,7 @@ shared_examples_for "a model with callbacks" do
     describe "touch callbacks" do
       it "runs in correct order" do
         subject.touch
-        subject.history.should eq [
+        expect(subject.history).to eq [
           [:after_find, :method],
           [:after_find, :string],
           [:after_find, :proc],
@@ -187,7 +187,7 @@ shared_examples_for "a model with callbacks" do
     describe "validations callback" do
       it "runs in correct order for persisted records" do
         subject.valid?
-        subject.history.should eq [
+        expect(subject.history).to eq [
           [:after_find, :method],
           [:after_find, :string],
           [:after_find, :proc],
@@ -218,7 +218,7 @@ shared_examples_for "a model with callbacks" do
     describe "update callbacks" do
       it "runs in the correct order" do
         subject.save
-        subject.history.should eq [
+        expect(subject.history).to eq [
           [:after_find, :method],
           [:after_find, :string],
           [:after_find, :proc],
@@ -267,7 +267,7 @@ shared_examples_for "a model with callbacks" do
     describe "destroy callbacks" do
       it "runs in correct order" do
         subject.destroy
-        subject.history.should eq [
+        expect(subject.history).to eq [
           [:after_find, :method],
           [:after_find, :string],
           [:after_find, :proc],
@@ -297,8 +297,8 @@ shared_examples_for "a model with callbacks" do
     describe "delete callbacks" do
       it "does not run callbacks for destroy" do
         subject.delete
-        subject.should be_destroyed
-        subject.history.should eq [
+        expect(subject).to be_destroyed
+        expect(subject.history).to eq [
           [:after_find, :method],
           [:after_find, :string],
           [:after_find, :proc],

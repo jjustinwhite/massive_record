@@ -21,18 +21,21 @@ describe MassiveRecord::ORM::Table do
         subject.change_id! new_id
       end
 
-      its(:id) { should eq new_id }
+      describe '#id' do
+        subject { super().id }
+        it { should eq new_id }
+      end
 
       it "saves itself with new id" do
-        Person.find(new_id).should eq subject
+        expect(Person.find(new_id)).to eq subject
       end
 
       it "has same attributes" do
-        Person.find(new_id).attributes.should eq subject.attributes
+        expect(Person.find(new_id).attributes).to eq subject.attributes
       end
 
       it "deletes the old id from the database" do
-        Person.should_not be_exists old_id
+        expect(Person).not_to be_exists old_id
       end
 
       describe "with identity map" do
@@ -40,8 +43,8 @@ describe MassiveRecord::ORM::Table do
           MassiveRecord::ORM::IdentityMap.use do
             person = Person.create!("id", {:name => "Thorbjorn", :age => 22, :points => 1})
             person.change_id! "id-2"
-            Person.find("id-2").should eq person
-            Person.should_not be_exists "id"
+            expect(Person.find("id-2")).to eq person
+            expect(Person).not_to be_exists "id"
           end
         end
       end
@@ -49,12 +52,12 @@ describe MassiveRecord::ORM::Table do
 
     describe "unsuccessfully" do
       it "raises error if unable to save new id" do
-        subject.should_receive(:save).and_return false
+        expect(subject).to receive(:save).and_return false
         expect { subject.change_id! new_id }.to raise_error
       end
 
       it "raises error if unable to destroy old record" do
-        Person.any_instance.stub(:destroy).and_return false
+        allow_any_instance_of(Person).to receive(:destroy).and_return false
         expect { subject.change_id! new_id }.to raise_error
       end
     end

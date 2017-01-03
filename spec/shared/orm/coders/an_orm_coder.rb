@@ -4,11 +4,11 @@ shared_examples_for "an orm coder" do
 
   [1, "1", nil, ["foo"], {'foo' => 'bar', "1" => 3}, {'nested' => {'inner' => 'secret'}}].each do |value|
     it "should dump a #{value.class} correctly" do
-      subject.dump(value).should == code_with.call(value)
+      expect(subject.dump(value)).to eq(code_with.call(value))
     end
 
     it "should load a #{value.class} correctly" do
-      subject.load(code_with.call(value)).should == value
+      expect(subject.load(code_with.call(value))).to eq(value)
     end
   end
 end

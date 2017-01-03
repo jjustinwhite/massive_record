@@ -38,7 +38,7 @@ describe MassiveRecord::Wrapper::Row do
   describe "ids utf-8 encoded" do
     context "new record" do
       it "saves" do
-        subject.save.should be_true
+        expect(subject.save).to be_true
       end
     end
 
@@ -46,19 +46,19 @@ describe MassiveRecord::Wrapper::Row do
       before { subject.save }
 
       it "finds" do
-        table.find(id).values["misc:name"].should eq name
+        expect(table.find(id).values["misc:name"]).to eq name
       end
 
       it "gets a cell" do
-        table.get(id, :misc, :name).should eq name
+        expect(table.get(id, :misc, :name)).to eq name
       end
 
       it "finds with starts_with option" do
-        table.all(:starts_with => id).first.values["misc:name"].should eq name
+        expect(table.all(:starts_with => id).first.values["misc:name"]).to eq name
       end
 
       it "finds with offset option" do
-        table.all(:offset => id).first.values["misc:name"].should eq name
+        expect(table.all(:offset => id).first.values["misc:name"]).to eq name
       end
     end
   end

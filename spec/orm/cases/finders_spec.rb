@@ -8,8 +8,8 @@ describe "finders" do
     include MockMassiveRecordConnection
 
     before do
-      @mocked_table = mock(MassiveRecord::Wrapper::Table, :to_ary => []).as_null_object
-      Person.stub(:table).and_return(@mocked_table)
+      @mocked_table = double(MassiveRecord::Wrapper::Table, :to_ary => []).as_null_object
+      allow(Person).to receive(:table).and_return(@mocked_table)
       
       @row = MassiveRecord::Wrapper::Row.new
       @row.id = "ID1"
@@ -21,138 +21,138 @@ describe "finders" do
     end
 
     it "should have at least one argument" do
-      lambda { Person.find }.should raise_error ArgumentError
+      expect { Person.find }.to raise_error ArgumentError
     end
 
     it "should raise RecordNotFound if id is nil" do
-      lambda { Person.find(nil) }.should raise_error MassiveRecord::ORM::RecordNotFound
+      expect { Person.find(nil) }.to raise_error MassiveRecord::ORM::RecordNotFound
     end
 
     describe "conditions" do
       it "should raise an error if conditions are given to first" do
-        lambda { Person.first(:conditions => "foo = 'bar'") }.should raise_error ArgumentError
+        expect { Person.first(:conditions => "foo = 'bar'") }.to raise_error ArgumentError
       end
 
       it "should raise an error if conditions are given to all" do
-        lambda { Person.all(:conditions => "foo = 'bar'") }.should raise_error ArgumentError
+        expect { Person.all(:conditions => "foo = 'bar'") }.to raise_error ArgumentError
       end
 
       it "should raise an error if conditions are given to find" do
-        lambda { Person.find(:conditions => "foo = 'bar'") }.should raise_error ArgumentError
+        expect { Person.find(:conditions => "foo = 'bar'") }.to raise_error ArgumentError
       end
     end
 
     describe "default select" do
       it "applies all the known column families to finder options as a default on all()" do
-        @mocked_table.should_receive(:all).with(hash_including(:select => Person.known_column_family_names)).and_return []
+        expect(@mocked_table).to receive(:all).with(hash_including(:select => Person.known_column_family_names)).and_return []
         Person.all
       end
 
       it "applies all the known column families to finder options as a default on first()" do
-        @mocked_table.should_receive(:all).with(hash_including(:select => Person.known_column_family_names)).and_return []
+        expect(@mocked_table).to receive(:all).with(hash_including(:select => Person.known_column_family_names)).and_return []
         Person.first
       end
 
       it "applies all the known column families to finder options as a default on first()" do
-        @mocked_table.should_receive(:find).with("ID1", hash_including(:select => Person.known_column_family_names)).and_return(@row)
+        expect(@mocked_table).to receive(:find).with("ID1", hash_including(:select => Person.known_column_family_names)).and_return(@row)
         Person.find("ID1")
       end
     end
 
     it "should ask the table to look up by it's id" do
-      @mocked_table.should_receive(:find).with("ID1", anything).and_return(@row)
+      expect(@mocked_table).to receive(:find).with("ID1", anything).and_return(@row)
       Person.find("ID1")
     end
 
     it "persists the raw values from table" do
-      @mocked_table.should_receive(:find).with("ID1", anything).and_return(@row)
+      expect(@mocked_table).to receive(:find).with("ID1", anything).and_return(@row)
       person = Person.find("ID1")
-      person.raw_data.should eq @row.values_raw_data_hash
+      expect(person.raw_data).to eq @row.values_raw_data_hash
     end
     
     it "should ask the table to fetch rows from a list of ids given as array" do
-      @mocked_table.should_receive(:find).with(["ID1", "ID2"], anything).and_return([@row, @row_2])
+      expect(@mocked_table).to receive(:find).with(["ID1", "ID2"], anything).and_return([@row, @row_2])
       people = Person.find(["ID1", "ID2"])
-      people.should be_instance_of Array
-      people.first.should be_instance_of Person
-      people.first.id.should == "ID1"
-      people.last.id.should == "ID2"
+      expect(people).to be_instance_of Array
+      expect(people.first).to be_instance_of Person
+      expect(people.first.id).to eq("ID1")
+      expect(people.last.id).to eq("ID2")
     end
     
     it "should ask table to fetch rows from a list of ids given as arguments" do
-      @mocked_table.should_receive(:find).with(["ID1", "ID2"], anything).and_return([@row, @row_2])
+      expect(@mocked_table).to receive(:find).with(["ID1", "ID2"], anything).and_return([@row, @row_2])
       people = Person.find("ID1", "ID2")
-      people.should be_instance_of Array
-      people.first.should be_instance_of Person
-      people.first.id.should == "ID1"
-      people.last.id.should == "ID2"
+      expect(people).to be_instance_of Array
+      expect(people.first).to be_instance_of Person
+      expect(people.first.id).to eq("ID1")
+      expect(people.last.id).to eq("ID2")
     end
 
     it "should raise error if not all multiple ids are found" do
-      @mocked_table.should_receive(:find).with(["ID1", "ID2"], anything).and_return([@row])
-      lambda { Person.find("ID1", "ID2") }.should raise_error MassiveRecord::ORM::RecordNotFound
+      expect(@mocked_table).to receive(:find).with(["ID1", "ID2"], anything).and_return([@row])
+      expect { Person.find("ID1", "ID2") }.to raise_error MassiveRecord::ORM::RecordNotFound
     end
     
     it "should call table's all with limit 1 on find(:first)" do
-      @mocked_table.should_receive(:all).with(hash_including(:limit => 1)).and_return([@row])
-      Person.find(:first).should be_instance_of Person
+      expect(@mocked_table).to receive(:all).with(hash_including(:limit => 1)).and_return([@row])
+      expect(Person.find(:first)).to be_instance_of Person
     end
 
     it "should call table's all on find(:all)" do
-      @mocked_table.should_receive(:all).and_return([@row])
+      expect(@mocked_table).to receive(:all).and_return([@row])
       Person.find(:all)
     end
 
     it "should return empty array on all if no results was found" do
-      @mocked_table.should_receive(:all).and_return([])
-      Person.all.should == []
+      expect(@mocked_table).to receive(:all).and_return([])
+      expect(Person.all).to eq([])
     end
 
     it "should return nil on first if no results was found" do
-      Person.first.should be_nil
+      expect(Person.first).to be_nil
     end
 
     it "should raise an error if not exactly the id is found" do
-      @mocked_table.should_receive(:find).and_return(@row)
-      lambda { Person.find("ID") }.should raise_error(MassiveRecord::ORM::RecordNotFound)
+      expect(@mocked_table).to receive(:find).and_return(@row)
+      expect { Person.find("ID") }.to raise_error(MassiveRecord::ORM::RecordNotFound)
     end
 
     it "should raise error if not all ids are found" do
-      @mocked_table.should_receive(:find).and_return([@row, @row_2])
-      lambda { Person.find("ID", "ID2") }.should raise_error(MassiveRecord::ORM::RecordNotFound)
+      expect(@mocked_table).to receive(:find).and_return([@row, @row_2])
+      expect { Person.find("ID", "ID2") }.to raise_error(MassiveRecord::ORM::RecordNotFound)
     end
   end
 
   describe "all" do
     it "should respond to all" do
-      TestClass.should respond_to :all
+      expect(TestClass).to respond_to :all
     end
 
     it "should call find with :all" do
-      TestClass.should_receive(:do_find).with(:all, anything)
+      expect(TestClass).to receive(:do_find).with(:all, anything)
       TestClass.all
     end
 
     it "should delegate all's call to find with it's args as second argument" do
       options = {:foo => :bar}
-      TestClass.should_receive(:do_find).with(anything, options)
+      expect(TestClass).to receive(:do_find).with(anything, options)
       TestClass.all options
     end
   end
 
   describe "first" do
     it "should respond to first" do
-      TestClass.should respond_to :first
+      expect(TestClass).to respond_to :first
     end
 
     it "should call find with :first" do
-      TestClass.should_receive(:do_find).with(:all, {:limit => 1}).and_return([])
+      expect(TestClass).to receive(:do_find).with(:all, {:limit => 1}).and_return([])
       TestClass.first
     end
 
     it "should delegate first's call to find with it's args as second argument" do
       options = {:foo => :bar}
-      TestClass.should_receive(:do_find).with(anything, hash_including(options)).and_return([])
+      expect(TestClass).to receive(:do_find).with(anything, hash_including(options)).and_return([])
       TestClass.first options
     end
   end
@@ -173,7 +173,7 @@ describe "finders" do
     end
 
     it "should raise record not found error" do
-      lambda { Person.find("not_found") }.should raise_error MassiveRecord::ORM::RecordNotFound
+      expect { Person.find("not_found") }.to raise_error MassiveRecord::ORM::RecordNotFound
     end
 
     it "should raise record not found error if table does not exist" do
@@ -182,38 +182,38 @@ describe "finders" do
     end
 
     it "should return the person object when found" do
-      @person.name.should == "John Doe"
-      @person.email.should == "john@base.com"
-      @person.age.should == 20
+      expect(@person.name).to eq("John Doe")
+      expect(@person.email).to eq("john@base.com")
+      expect(@person.age).to eq(20)
     end
 
     it "should maintain encoding of ids" do
       id = "thorbjørn"
       person = Person.create! id, :name => "Thorbjørn", :age => 20
-      Person.find(id).should eq person
+      expect(Person.find(id)).to eq person
     end
 
     it "should find first person" do
-      Person.first.should == @person
+      expect(Person.first).to eq(@person)
     end
 
     it "should find all" do
       all = Person.all
-      all.should include @person, @bob
-      all.length.should == 2
+      expect(all).to include @person, @bob
+      expect(all.length).to eq(2)
     end
 
     it "should find all persons, even if it is more than 10" do
       15.times { |i| Person.create! "id-#{i}", :name => "Going to die :-(", :age => i + 20 }
-      Person.all.length.should > 10
+      expect(Person.all.length).to be > 10
     end
 
     it "should raise error if not all requested records was found" do
-      lambda { Person.find(["ID1", "not exists"]) }.should raise_error MassiveRecord::ORM::RecordNotFound
+      expect { Person.find(["ID1", "not exists"]) }.to raise_error MassiveRecord::ORM::RecordNotFound
     end
 
     it "should return what it finds if asked to" do
-      lambda { Person.find(["ID1", "not exists"], :skip_expected_result_check => true) }.should_not raise_error MassiveRecord::ORM::RecordNotFound
+      expect { Person.find(["ID1", "not exists"], :skip_expected_result_check => true) }.not_to raise_error
     end
 
 
@@ -227,7 +227,7 @@ describe "finders" do
       end
 
       it "is able to load embeds many relations" do
-        subject.addresses.should eq [address]
+        expect(subject.addresses).to eq [address]
       end
     end
   end
@@ -241,10 +241,10 @@ describe "finders" do
       Person.find_in_batches(:batch_size => batch_size) do |rows|
         group_number += 1
         rows.each do |row|
-          row.id.should_not be_nil
+          expect(row.id).not_to be_nil
         end
       end        
-      group_number.should == @table_size / 3
+      expect(group_number).to eq(@table_size / 3)
     end
 
     it "should not do a thing if table does not exist" do
@@ -258,16 +258,16 @@ describe "finders" do
         end
       end
 
-      counter.should == 0
+      expect(counter).to eq(0)
     end
     
     it "should iterate through a collection of rows using a batch process" do
       rows_number = 0
       Person.find_each(:batch_size => 3) do |row|
-        row.id.should_not be_nil
+        expect(row.id).not_to be_nil
         rows_number += 1
       end
-      rows_number.should == @table_size
+      expect(rows_number).to eq(@table_size)
     end
   end
 
@@ -275,11 +275,11 @@ describe "finders" do
     include CreatePersonBeforeEach
 
     it "should return true if a row exists with given id" do
-      Person.exists?("ID1").should be_true
+      expect(Person.exists?("ID1")).to be_true
     end
 
     it "should return false if a row does not exists with given id" do
-      Person.exists?("unkown").should be_false
+      expect(Person.exists?("unkown")).to be_false
     end
   end
 end

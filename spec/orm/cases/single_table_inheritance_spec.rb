@@ -10,30 +10,33 @@ describe "Single table inheritance" do
     describe klass do
       let(:subject) { klass.new("ID1", :name => "Person1", :email => "one@person.com", :age => 11, :points => 111, :status => true) }
 
-      its(:type) { should == klass.to_s }
+      describe '#type' do
+        subject { super().type }
+        it { should == klass.to_s }
+      end
 
       it "instantiates correct class when reading from database via super class" do
         subject.save!
-        Person.find(subject.id).should == subject
+        expect(Person.find(subject.id)).to eq(subject)
       end
     end
   end
 
   it "sets no type when saving base class" do
     person = Person.new "ID1", :name => "Person1", :email => "one@person.com", :age => 11, :points => 111, :status => true
-    person.type.should be_nil
+    expect(person.type).to be_nil
   end
 
   describe "fetching and restrictions" do
     describe "#first" do
       it "returns record if class found is the look-up class" do
         person = Person.create!("ID1", :name => "Person1", :email => "one@person.com", :age => 11, :points => 111, :status => true)
-        Person.first.should eq person
+        expect(Person.first).to eq person
       end
 
       it "returns record if class found is subclass of look up class" do
         friend = Friend.create!("ID1", :name => "Person1", :email => "one@person.com", :age => 11, :points => 111, :status => true)
-        Person.first.should eq friend
+        expect(Person.first).to eq friend
       end
 
       it "raises an error if you call first on sub class" do
@@ -41,24 +44,24 @@ describe "Single table inheritance" do
       end
 
       it "does not raise error if you call first on base class" do
-        Person.first.should eq nil
+        expect(Person.first).to eq nil
       end
     end
 
     describe "#all" do
       it "returns [] if class found is a super class of look-up class" do
         Person.create!("ID1", :name => "Person1", :email => "one@person.com", :age => 11, :points => 111, :status => true)
-        Friend.all.should eq []
+        expect(Friend.all).to eq []
       end
 
       it "returns record if class found is the look-up class" do
         person = Person.create!("ID1", :name => "Person1", :email => "one@person.com", :age => 11, :points => 111, :status => true)
-        Person.all.should eq [person]
+        expect(Person.all).to eq [person]
       end
 
       it "returns record if class found is subclass of look up class" do
         friend = Friend.create!("ID1", :name => "Person1", :email => "one@person.com", :age => 11, :points => 111, :status => true)
-        Person.all.should eq [friend]
+        expect(Person.all).to eq [friend]
       end
 
       it "returns record if class found is subclass of look up class, when class is not base class" do
@@ -67,15 +70,15 @@ describe "Single table inheritance" do
         best_friend = BestFriend.create!("ID3", :name => "Person1", :email => "one@person.com", :age => 11, :points => 111, :status => true)
 
         Friend.all.tap do |result|
-          result.should include friend, best_friend
-          result.should_not include person
+          expect(result).to include friend, best_friend
+          expect(result).not_to include person
         end
       end
     end
 
     it "does not check kind of records if class is not STI enabled" do
       record = TestClass.create! :foo => 'wee'
-      TestClass.should_not_receive(:ensure_only_class_or_subclass_of_self_are_returned)
+      expect(TestClass).not_to receive(:ensure_only_class_or_subclass_of_self_are_returned)
       TestClass.first
     end
   end

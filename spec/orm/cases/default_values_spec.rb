@@ -13,11 +13,30 @@ describe "default values" do
   end
 
   context "new record" do
-    its(:dictionary) { should eq Hash.new }
-    its(:points) { should eq 1 }
-    its(:status) { should eq false }
-    its(:positive_as_default) { should eq true }
-    its(:phone_numbers) { should eq [] }
+    describe '#dictionary' do
+      subject { super().dictionary }
+      it { should eq Hash.new }
+    end
+
+    describe '#points' do
+      subject { super().points }
+      it { should eq 1 }
+    end
+
+    describe '#status' do
+      subject { super().status }
+      it { should eq false }
+    end
+
+    describe '#positive_as_default' do
+      subject { super().positive_as_default }
+      it { should eq true }
+    end
+
+    describe '#phone_numbers' do
+      subject { super().phone_numbers }
+      it { should eq [] }
+    end
   end
 
   context "persisted record" do
@@ -31,10 +50,29 @@ describe "default values" do
       subject.reload
     end
 
-    its(:dictionary) { should be_nil }
-    its(:points) { should be_nil }
-    its(:status) { should be_nil }
-    its(:positive_as_default) { should be_false }
-    its(:phone_numbers) { should eq [] }
+    describe '#dictionary' do
+      subject { super().dictionary }
+      it { should be_nil }
+    end
+
+    describe '#points' do
+      subject { super().points }
+      it { should be_nil }
+    end
+
+    describe '#status' do
+      subject { super().status }
+      it { should be_nil }
+    end
+
+    describe '#positive_as_default' do
+      subject { super().positive_as_default }
+      it { should be_false }
+    end
+
+    describe '#phone_numbers' do
+      subject { super().phone_numbers }
+      it { should eq [] }
+    end
   end
 end

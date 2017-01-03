@@ -11,7 +11,7 @@ describe MassiveRecord::ORM::Persistence::Operations::Suppress do
 
   describe "#execute" do
     it "returns true" do
-      subject.execute.should be_true
+      expect(subject.execute).to be_true
     end
   end
 end

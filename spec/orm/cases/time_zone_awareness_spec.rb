@@ -7,21 +7,21 @@ describe "Time zone awareness" do
 
   describe "configuration" do
     it "should have a default time zone configuration" do
-      TestClass.default_timezone.should eq :local
+      expect(TestClass.default_timezone).to eq :local
     end
 
     it "should have default time zone awareness" do
-      TestClass.time_zone_aware_attributes.should eq false
+      expect(TestClass.time_zone_aware_attributes).to eq false
     end
 
     it "should by default skip no attributes when doing time zone conversions" do
-      TestClass.skip_time_zone_conversion_for_attributes.should eq []
+      expect(TestClass.skip_time_zone_conversion_for_attributes).to eq []
     end
 
     it "should be possible to skip some attributes in TestClass while Person is untuched" do
       TestClass.skip_time_zone_conversion_for_attributes = [:test]
-      TestClass.skip_time_zone_conversion_for_attributes.should include :test
-      Person.skip_time_zone_conversion_for_attributes.should be_empty
+      expect(TestClass.skip_time_zone_conversion_for_attributes).to include :test
+      expect(Person.skip_time_zone_conversion_for_attributes).to be_empty
     end
   end
 
@@ -32,26 +32,26 @@ describe "Time zone awareness" do
     it "should do conversion when attribute is time" do
       in_time_zone "utc" do
         field.type = :time
-        TestClass.send(:time_zone_conversion_on_field?, field).should be_true
+        expect(TestClass.send(:time_zone_conversion_on_field?, field)).to be_true
       end
     end
 
     it "should not do conversion if time_zone_aware_attributes is false" do
       field.type = :time
       TestClass.time_zone_aware_attributes = false
-      TestClass.send(:time_zone_conversion_on_field?, field).should be_false
+      expect(TestClass.send(:time_zone_conversion_on_field?, field)).to be_false
     end
 
     it "should not do conversion when attribute name is included in skip list" do
       field.type = :time
       TestClass.skip_time_zone_conversion_for_attributes = ['tested_at']
-      TestClass.send(:time_zone_conversion_on_field?, field).should be_false
+      expect(TestClass.send(:time_zone_conversion_on_field?, field)).to be_false
       TestClass.skip_time_zone_conversion_for_attributes = []
     end
 
     it "should not do conversion when attribute is string field" do
       field.type = :string
-      TestClass.send(:time_zone_conversion_on_field?, field).should be_false
+      expect(TestClass.send(:time_zone_conversion_on_field?, field)).to be_false
     end
   end
 
@@ -70,31 +70,31 @@ describe "Time zone awareness" do
     it "should be nil when set to nil" do
       in_time_zone tz_europe do
         subject.tested_at = nil
-        subject.tested_at.should be_nil
+        expect(subject.tested_at).to be_nil
       end
     end
 
     it "should return time as TimeWithZone when attribute accessed directly" do
       in_time_zone tz_europe do
         subject.tested_at = time_as_string
-        subject.tested_at.should be_instance_of ActiveSupport::TimeWithZone
+        expect(subject.tested_at).to be_instance_of ActiveSupport::TimeWithZone
       end
     end
 
     it "should return time as TimeWithZone when attribute accessed through read_attribute" do
       in_time_zone tz_europe do
         subject.tested_at = time_as_string
-        subject.read_attribute(:tested_at).should be_instance_of ActiveSupport::TimeWithZone
+        expect(subject.read_attribute(:tested_at)).to be_instance_of ActiveSupport::TimeWithZone
       end
     end
 
     it "should return time in local time" do
       in_time_zone tz_europe do
         subject.tested_at = time_as_string
-        subject.tested_at.time_zone.should eq ActiveSupport::TimeZone[tz_europe]
+        expect(subject.tested_at.time_zone).to eq ActiveSupport::TimeZone[tz_europe]
 
         in_time_zone tz_us do
-          subject.tested_at.time_zone.should eq ActiveSupport::TimeZone[tz_us]
+          expect(subject.tested_at.time_zone).to eq ActiveSupport::TimeZone[tz_us]
         end
       end
     end
@@ -105,7 +105,7 @@ describe "Time zone awareness" do
 
       in_time_zone tz_europe do
         subject.tested_at = us_time
-        subject.tested_at.should eq utc_time
+        expect(subject.tested_at).to eq utc_time
       end
     end
 
@@ -122,7 +122,7 @@ describe "Time zone awareness" do
       subject.reload
 
       in_time_zone tz_us do
-        subject.tested_at.to_s.should eq us_time.to_s
+        expect(subject.tested_at.to_s).to eq us_time.to_s
       end
     end
 
@@ -136,10 +136,10 @@ describe "Time zone awareness" do
       end
 
       subject.reload
-      subject.tested_at.to_s.should eq utc_time.to_s
+      expect(subject.tested_at.to_s).to eq utc_time.to_s
 
       in_time_zone tz_europe do
-        subject.tested_at.to_s.should eq europe_time.to_s
+        expect(subject.tested_at.to_s).to eq europe_time.to_s
       end
     end
 
@@ -150,7 +150,7 @@ describe "Time zone awareness" do
 
         r = TestClass.table.find("test")
         cell = r.columns["test_family:tested_at"]
-        cell.value.should eq MassiveRecord::ORM::Base.coder.dump(Time.zone.parse(time_as_string).utc)
+        expect(cell.value).to eq MassiveRecord::ORM::Base.coder.dump(Time.zone.parse(time_as_string).utc)
       end
     end
 
@@ -160,14 +160,14 @@ describe "Time zone awareness" do
           subject.tested_at = time_as_string
           subject.save!
 
-          subject.reload.tested_at.to_s.should eq Time.zone.parse(time_as_string).to_s
+          expect(subject.reload.tested_at.to_s).to eq Time.zone.parse(time_as_string).to_s
         end
       end
 
       it "handles crappy strings" do
         in_time_zone tz_us do
           subject.tested_at = "rubbish"
-          subject.tested_at.should be_nil
+          expect(subject.tested_at).to be_nil
         end
       end
 
@@ -176,7 +176,7 @@ describe "Time zone awareness" do
           subject.write_attribute :tested_at, time_as_string
           subject.save!
 
-          subject.reload.tested_at.to_s.should eq Time.zone.parse(time_as_string).to_s
+          expect(subject.reload.tested_at.to_s).to eq Time.zone.parse(time_as_string).to_s
         end
       end
     end

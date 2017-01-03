@@ -35,38 +35,41 @@ module MassiveRecord
 
             describe "#embedded_in_proxies" do
               it "returns some proxies" do
-                subject.embedded_in_proxies.should_not be_empty
+                expect(subject.embedded_in_proxies).not_to be_empty
               end
 
               it "returns proxies which represents embedded in relations" do
-                subject.embedded_in_proxies.all? { |p| p.metadata.embedded_in? }.should be_true
+                expect(subject.embedded_in_proxies.all? { |p| p.metadata.embedded_in? }).to be_true
               end
             end
 
             describe "#embedded_in_proxy_targets" do
-              its(:embedded_in_proxy_targets) { should include person }
+              describe '#embedded_in_proxy_targets' do
+                subject { super().embedded_in_proxy_targets }
+                it { should include person }
+              end
             end
 
             describe "#row_for_record" do
               it "returns row for given record" do
                 row = subject.row_for_record(person)
-                row.id.should eq person.id
-                row.table.should eq person.class.table
+                expect(row.id).to eq person.id
+                expect(row.table).to eq person.class.table
               end
             end
 
 
 
             describe "update_embedded" do
-              before { subject.stub(:row_for_record).and_return(row) }
+              before { allow(subject).to receive(:row_for_record).and_return(row) }
 
               it "ask for record's row" do
-                subject.should_receive(:row_for_record).with(person).and_return(row)
+                expect(subject).to receive(:row_for_record).with(person).and_return(row)
                 subject.update_embedded(proxy_for_person, "new_value")
               end
 
               it "sets value on row" do
-                row.should_receive(:values=).with(
+                expect(row).to receive(:values=).with(
                   'addresses' => {
                     address.database_id => "new_value"
                   }
@@ -75,7 +78,7 @@ module MassiveRecord
               end
 
               it "asks row to be saved" do
-                row.should_receive(:save)
+                expect(row).to receive(:save)
                 subject.update_embedded(proxy_for_person, "new_value")
               end
             end

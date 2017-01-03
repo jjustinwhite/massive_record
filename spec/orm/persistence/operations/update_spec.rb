@@ -13,12 +13,12 @@ describe MassiveRecord::ORM::Persistence::Operations::Update do
 
   describe "#execute" do
     it "ensures that we have table and column families" do
-      subject.should_receive(:ensure_that_we_have_table_and_column_families!)
+      expect(subject).to receive(:ensure_that_we_have_table_and_column_families!)
       subject.execute
     end
 
     it "calls upon store_record_to_database for help with actually update job" do
-      subject.should_receive(:store_record_to_database).with('update', ['foo'])
+      expect(subject).to receive(:store_record_to_database).with('update', ['foo'])
       subject.execute
     end
   end

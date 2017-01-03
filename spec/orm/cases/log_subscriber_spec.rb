@@ -31,7 +31,7 @@ describe "log subscriber" do
 
   context "debug" do
     it "should have nothing loged to begin with" do
-      subject.logged(:debug).size.should be_zero
+      expect(subject.logged(:debug).size).to be_zero
     end
 
 
@@ -39,31 +39,31 @@ describe "log subscriber" do
       it "should have one lined log to debug when doing a all" do
         Person.all
         wait
-        subject.logged(:debug).size.should eq 1
+        expect(subject.logged(:debug).size).to eq 1
       end
 
       it "should include a the class name of what is loading, time it took, a description about what has been done" do
         Person.all
         wait
-        subject.logged(:debug).last.should match /Person.+?load.+?([\d.]+).+?all/
+        expect(subject.logged(:debug).last).to match /Person.+?load.+?([\d.]+).+?all/
       end
 
       it "should have one log line when doing first" do
         Person.first
         wait
-        subject.logged(:debug).size.should eq 1
+        expect(subject.logged(:debug).size).to eq 1
       end
 
       it "should have some clue written that it is first" do
         Person.first
         wait
-        subject.logged(:debug).first.should include ":limit=>1"
+        expect(subject.logged(:debug).first).to include ":limit=>1"
       end
 
       it "should have one log when doing find" do
         Person.find("dummy") rescue nil
         wait
-        subject.logged(:debug).first.should include 'options: ["dummy",'
+        expect(subject.logged(:debug).first).to include 'options: ["dummy",'
       end
 
 
@@ -75,7 +75,7 @@ describe "log subscriber" do
           Person.find(person.id)
 
           wait
-          subject.logged(:debug).second.should match /Person.+?loaded from identity map/
+          expect(subject.logged(:debug).second).to match /Person.+?loaded from identity map/
         end
       end
     end
@@ -89,11 +89,11 @@ describe "log subscriber" do
 
       describe "create" do
         it "should have one line log when creating a record" do
-          subject.logged(:debug).size.should eq 1
+          expect(subject.logged(:debug).size).to eq 1
         end
 
         it "should include class of what is being save, time it took an what kind of save it was" do
-          subject.logged(:debug).first.should match /Person.+?save.+?([\d.]+).+?create/
+          expect(subject.logged(:debug).first).to match /Person.+?save.+?([\d.]+).+?create/
         end
       end
 
@@ -106,15 +106,15 @@ describe "log subscriber" do
         end
 
         it "should have one line log when updating a record" do
-          subject.logged(:debug).size.should eq 1
+          expect(subject.logged(:debug).size).to eq 1
         end
 
         it "should include class of what is being save, time it took an what kind of save it was" do
-          subject.logged(:debug).first.should match /Person.+?save.+?([\d.]+).+?update.+?id: first/
+          expect(subject.logged(:debug).first).to match /Person.+?save.+?([\d.]+).+?update.+?id: first/
         end
 
         it "should include a list of attributes which was updated" do
-          subject.logged(:debug).first.should match /attributes: name/
+          expect(subject.logged(:debug).first).to match /attributes: name/
         end
       end
     end
@@ -125,13 +125,13 @@ describe "log subscriber" do
     let(:level) { ActiveSupport::Logger::Severity::INFO }
 
     it "should have nothing logged to begin with" do
-      subject.logged(:debug).size.should be_zero
+      expect(subject.logged(:debug).size).to be_zero
     end
 
     it "should have nothing logged when doing an all call" do
       Person.all
       wait
-      subject.logged(:debug).size.should be_zero
+      expect(subject.logged(:debug).size).to be_zero
     end
   end
 

@@ -30,11 +30,11 @@ describe "A table" do
     end
 
     it "should not exists in the database" do
-      @myRawTable.exists?.should be_false
+      expect(@myRawTable.exists?).to be_false
     end
   
     it "should not have any column families" do
-      @myRawTable.column_families.should be_empty
+      expect(@myRawTable.column_families).to be_empty
     end
 
   end
@@ -45,12 +45,12 @@ describe "A table" do
   
       it "should destroy the test table" do
         t = table
-        t.destroy.should be_true
+        expect(t.destroy).to be_true
       end
 
       it "should exists in the database" do
         t = table
-        t.exists?.should be_true
+        expect(t.exists?).to be_true
         t.destroy
       end
   
@@ -60,13 +60,13 @@ describe "A table" do
 
       it "should contains two column families" do
         t = table
-        t.column_families.size.should == 2
+        expect(t.column_families.size).to eq(2)
         t.destroy
       end
     
       it "should fetch column families from the database" do
         t = table
-        t.fetch_column_families.size.should == 2
+        expect(t.fetch_column_families.size).to eq(2)
         t.destroy
       end
     
@@ -76,11 +76,11 @@ describe "A table" do
 
       it "should return nil if no cells has been created" do
         row = MassiveRecord::Wrapper::Row.new
-        row.updated_at.should be_nil
+        expect(row.updated_at).to be_nil
       end
 
       it "should not contains any row" do
-        table.first.should be_nil
+        expect(table.first).to be_nil
       end
 
     end
@@ -122,65 +122,65 @@ describe "A table" do
       end
             
       it "should list all column names" do
-        @myTable.column_names.size.should == 9
+        expect(@myTable.column_names.size).to eq(9)
       end
       
       it "should only load one column" do
-        @myTable.get("ID1", :info, :first_name).should == "John"
+        expect(@myTable.get("ID1", :info, :first_name)).to eq("John")
       end
 
       it "should return nil if column does not exist" do
-        @myTable.get("ID1", :info, :unkown_column).should be_nil
+        expect(@myTable.get("ID1", :info, :unkown_column)).to be_nil
       end
       
       it "should only load a given column family" do
-        @myTable.first(:select => ["info"]).column_families.should == ["info"]
-        @myTable.all(:limit => 1, :select => ["info"]).first.column_families.should == ["info"]
-        @myTable.find("ID1", :select => ["info"]).column_families.should == ["info"]
+        expect(@myTable.first(:select => ["info"]).column_families).to eq(["info"])
+        expect(@myTable.all(:limit => 1, :select => ["info"]).first.column_families).to eq(["info"])
+        expect(@myTable.find("ID1", :select => ["info"]).column_families).to eq(["info"])
       end
 
       it "should return nil if id is not found" do
-        @myTable.find("not_exist_FOO").should be_nil
+        expect(@myTable.find("not_exist_FOO")).to be_nil
       end
 
       it "should update row values" do
         row = @myTable.first
-        row.values["info:first_name"].should eql("John")
+        expect(row.values["info:first_name"]).to eql("John")
         
         row.update_columns({ :info =>  { :first_name => "Bob" } })
-        row.values["info:first_name"].should eql("Bob")
+        expect(row.values["info:first_name"]).to eql("Bob")
         
         row.update_column(:info, :email, "bob@base.com")
-        row.values["info:email"].should eql("bob@base.com")
+        expect(row.values["info:email"]).to eql("bob@base.com")
       end
 
       it "should encode everything to UTF-8" do
         row = @myTable.first
 
-        row.values["misc:dislike"].encoding.should == Encoding::UTF_8
-        row.values["misc:dislike"].should == "{\"Washing\":\"Boring 6/10\",\"Ironing\":\"Boring 8/10\"}"
+        expect(row.values["misc:dislike"].encoding).to eq(Encoding::UTF_8)
+        expect(row.values["misc:dislike"]).to eq("{\"Washing\":\"Boring 6/10\",\"Ironing\":\"Boring 8/10\"}")
 
-        row.values["misc:friend"].encoding.should == Encoding::UTF_8
-        row.values["misc:friend"].should == "Thorbjørn"
+        expect(row.values["misc:friend"].encoding).to eq(Encoding::UTF_8)
+        expect(row.values["misc:friend"]).to eq("Thorbjørn")
       end
 
       it "should persist integer values as binary" do
         row = @myTable.first
-        row.values["misc:integer"].should eq [1234567].pack('q').reverse
+        expect(row.values["misc:integer"]).to eq [1234567].pack('q').reverse
       end
       
       it "should persist row changes" do
         row = @myTable.first
         row.update_columns({ :info => { :first_name => "Bob" } })
-        row.save.should be_true
+        expect(row.save).to be_true
 
         row = @myTable.first
-        row.values["info:first_name"].should == "Bob"
+        expect(row.values["info:first_name"]).to eq("Bob")
       end
 
       it "should have a updated_at for a row" do
         row = @myTable.first
-        row.updated_at.should be_a_kind_of Time
+        expect(row.updated_at).to be_a_kind_of Time
       end
 
       it "should have an updated_at for the row which is taken from the last updated attribute" do
@@ -189,7 +189,7 @@ describe "A table" do
         row.save
 
         row = @myTable.first
-        row.columns["info:first_name"].created_at.should == row.updated_at
+        expect(row.columns["info:first_name"].created_at).to eq(row.updated_at)
       end
 
       it "should have a new updated at for a row" do
@@ -199,22 +199,22 @@ describe "A table" do
         row.save
 
         row = @myTable.first        
-        updated_at_was.should_not == row.updated_at
+        expect(updated_at_was).not_to eq(row.updated_at)
       end
       
       it "should merge data" do
         row = @myTable.first
         row.update_columns({ :misc => { :super_power => "Eating"} })
-        row.columns.collect{|k, v| k if k.include?("misc:")}.delete_if{|v| v.nil?}.sort.should(
+        expect(row.columns.collect{|k, v| k if k.include?("misc:")}.delete_if{|v| v.nil?}.sort).to(
           eql(["misc:null_test", "misc:integer", "misc:friend", "misc:like", "misc:empty", "misc:dislike", "misc:super_power"].sort)
         )
       end
       
       it "should deserialize Array / Hash values from YAML automatically" do
         row = @myTable.first
-        ActiveSupport::JSON.decode(row.values["misc:like"]).class.should eql(Array)
-        ActiveSupport::JSON.decode(row.values["misc:dislike"]).class.should eql(Hash)
-        ActiveSupport::JSON.decode(row.values["misc:empty"]).class.should eql(Hash)
+        expect(ActiveSupport::JSON.decode(row.values["misc:like"]).class).to eql(Array)
+        expect(ActiveSupport::JSON.decode(row.values["misc:dislike"]).class).to eql(Hash)
+        expect(ActiveSupport::JSON.decode(row.values["misc:empty"]).class).to eql(Hash)
       end
       
       it "should be able to perform partial updates" do
@@ -223,14 +223,14 @@ describe "A table" do
         row.save
 
         row = @myTable.first
-        row.values["misc:genre"].should == "M"
+        expect(row.values["misc:genre"]).to eq("M")
       end
 
       it "should be able to do atomic increment call on new cell" do
         row = @myTable.first
 
         result = row.atomic_increment("misc:value_to_increment")
-        result.should == 1
+        expect(result).to eq(1)
       end
 
       it "should be able to pass in what to incremet the new cell by" do
@@ -238,30 +238,30 @@ describe "A table" do
         result = row.atomic_increment("misc:value_to_increment")
         result = row.atomic_increment("misc:value_to_increment", 2)
 
-        result.should == 3
+        expect(result).to eq(3)
       end
 
       it "should be able to do atomic increment on existing values" do
         row = @myTable.first
 
         result = row.atomic_increment("misc:integer")
-        result.should == 1234568
+        expect(result).to eq(1234568)
       end
 
       it "should be settable to nil" do
         row = @myTable.first
 
-        row.values["misc:null_test"].should_not be_nil
+        expect(row.values["misc:null_test"]).not_to be_nil
 
         row.update_column(:misc, :null_test, nil)
         row.save
 
         row = @myTable.first
-        row.values["misc:null_test"].should be_nil
+        expect(row.values["misc:null_test"]).to be_nil
       end
       
       it "should delete a row" do
-        @myTable.first.destroy.should be_true
+        expect(@myTable.first.destroy).to be_true
       end
             
     end
@@ -289,26 +289,26 @@ describe "A table" do
     end
     
     it "should contains 10 rows" do
-      @myTable.all.size.should == 10
-      @myTable.all.collect(&:id).size.should == 10
+      expect(@myTable.all.size).to eq(10)
+      expect(@myTable.all.collect(&:id).size).to eq(10)
     end
     
     it "should load the first row" do
-      @myTable.first.should be_a_kind_of(MassiveRecord::Wrapper::Row)
+      expect(@myTable.first).to be_a_kind_of(MassiveRecord::Wrapper::Row)
     end
     
     it "should find rows from a list of IDs" do
       ids_list = [["A1"], ["A1", "A2", "A3"]]
       ids_list.each do |ids|
         @myTable.find(ids).each do |row|
-          ids.include?(row.id).should be_true
+          expect(ids.include?(row.id)).to be_true
         end
       end
     end
   
     it "should iterate through a collection of rows" do
       @myTable.all.each do |row|
-        row.id.should_not be_nil
+        expect(row.id).not_to be_nil
       end
     end
   
@@ -317,26 +317,26 @@ describe "A table" do
       @myTable.find_in_batches(:batch_size => 2, :select => ["info"]) do |group|
         group_number += 1
         group.each do |row|
-          row.id.should_not be_nil
+          expect(row.id).not_to be_nil
         end
       end        
-      group_number.should == 5
+      expect(group_number).to eq(5)
     end
   
     it "should find 1 row using the :starts_with option" do
-      @myTable.all(:starts_with => "A1").size.should == 1
+      expect(@myTable.all(:starts_with => "A1").size).to eq(1)
     end
   
     it "should find 5 rows using the :starts_with option" do
-      @myTable.all(:starts_with => "A").size.should == 5
+      expect(@myTable.all(:starts_with => "A").size).to eq(5)
     end
   
     it "should find 9 rows using the :offset option" do
-      @myTable.all(:offset => "A2").size.should == 9
+      expect(@myTable.all(:offset => "A2").size).to eq(9)
     end
     
     it "should find 4 rows using both :offset and :starts_with options" do
-      @myTable.all(:offset => "A2", :starts_with => "A").size.should == 4
+      expect(@myTable.all(:offset => "A2", :starts_with => "A").size).to eq(4)
     end
   end
 end

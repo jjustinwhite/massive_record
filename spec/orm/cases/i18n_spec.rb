@@ -12,11 +12,11 @@ describe "translation and naming" do
     end
 
     it "should look up an by a string" do
-      Person.human_attribute_name("name").should == "person's name"
+      expect(Person.human_attribute_name("name")).to eq("person's name")
     end
 
     it "should look up an by a symbol" do
-      Person.human_attribute_name(:name).should == "person's name"
+      expect(Person.human_attribute_name(:name)).to eq("person's name")
     end
   end
 
@@ -26,7 +26,7 @@ describe "translation and naming" do
     end
 
     it "should return it's human name" do
-      Person.model_name.human.should == "A person object"
+      expect(Person.model_name.human).to eq("A person object")
     end
   end
 end

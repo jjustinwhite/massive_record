@@ -20,43 +20,46 @@ describe MassiveRecord::ORM::Persistence::Operations::Embedded::Reload do
 
   describe "#execute" do
     context "new record" do
-      before { record.stub(:persisted?).and_return false }
+      before { allow(record).to receive(:persisted?).and_return false }
 
-      its(:execute) { should be_false }
+      describe '#execute' do
+        subject { super().execute }
+        it { should be_false }
+      end
     end
 
     context "persisted" do
-      let(:inverse_proxy) { mock(Object, :reload => true, :find => record) }
+      let(:inverse_proxy) { double(Object, :reload => true, :find => record) }
       let(:embedded_in_proxy) { subject.embedded_in_proxies.first }
 
       before do
-        subject.stub(:inverse_proxy_for).and_return(inverse_proxy)
+        allow(subject).to receive(:inverse_proxy_for).and_return(inverse_proxy)
       end
 
       it "just returns false if no not embedded in any proxies" do
-        subject.should_receive(:embedded_in_proxies).any_number_of_times.and_return []
-        subject.execute.should be_false
+        allow(subject).to receive(:embedded_in_proxies).and_return []
+        expect(subject.execute).to be_false
       end
 
       it "asks for inverse proxy" do
-        subject.should_receive(:inverse_proxy_for).with(embedded_in_proxy).and_return(inverse_proxy)
+        expect(subject).to receive(:inverse_proxy_for).with(embedded_in_proxy).and_return(inverse_proxy)
         subject.execute
       end
 
       it "reloads inverse proxy" do
-        inverse_proxy.should_receive :reload
+        expect(inverse_proxy).to receive :reload
         subject.execute
       end
 
       it "finds the record asked to be reloaded" do
-        inverse_proxy.should_receive(:find).with(record.id).and_return record
+        expect(inverse_proxy).to receive(:find).with(record.id).and_return record
         subject.execute
       end
 
       it "reinit record with found record's attributes and raw_data" do
-        record.should_receive(:attributes).and_return('attributes' => {})
-        record.should_receive(:raw_data).and_return('raw_data' => {})
-        record.should_receive(:reinit_with).with({
+        expect(record).to receive(:attributes).and_return('attributes' => {})
+        expect(record).to receive(:raw_data).and_return('raw_data' => {})
+        expect(record).to receive(:reinit_with).with({
           'attributes' => {'attributes' => {}},
           'raw_data' => {'raw_data' => {}}
         })

@@ -4,67 +4,67 @@ require 'orm/models/address'
 
 shared_examples_for "validateable massive record model" do
   it "should include ActiveModel::Validations" do
-    @model.class.included_modules.should include(ActiveModel::Validations)
+    expect(@model.class.included_modules).to include(ActiveModel::Validations)
   end
 
   describe "behaviour from active model" do
     it "should respond to valid?" do
-      @model.should respond_to :valid?
+      expect(@model).to respond_to :valid?
     end
 
     it "should respond to errors" do
-      @model.should respond_to :errors
+      expect(@model).to respond_to :errors
     end
 
     it "should have one error" do
       @invalidate_model.call(@model)
       @model.valid?
-      @model.should have(1).error
+      expect(@model.size).to eq(1)
     end
   end
 
   describe "persistance" do
     it "should not interrupt saving of a model if its valid" do
-      @model.save.should be_true
-      @model.should be_persisted
+      expect(@model.save).to be_true
+      expect(@model).to be_persisted
     end
 
 
     it "should return false on save if record is not valid" do
       @invalidate_model.call(@model)
-      @model.save.should be_false
+      expect(@model.save).to be_false
     end
 
     it "should not save recurd if record is not valid" do
       @invalidate_model.call(@model)
       @model.save
-      @model.should be_new_record
+      expect(@model).to be_new_record
     end
 
     it "should skip validation if asked to" do
       @invalidate_model.call(@model)
       @model.save :validate => false
-      @model.should be_persisted
+      expect(@model).to be_persisted
     end
 
     it "should raise record invalid if save! is called on invalid record" do
       @invalidate_model.call(@model)
-      @model.should_receive(:valid?).and_return(false)
-      lambda { @model.save! }.should raise_error MassiveRecord::ORM::RecordInvalid
+      expect(@model).to receive(:valid?).and_return(false)
+      expect { @model.save! }.to raise_error MassiveRecord::ORM::RecordInvalid
     end
 
     it "should raise record invalid if create! is called with invalid attributes" do
       @invalidate_model.call(@model)
-      @model.class.stub(:new).and_return(@model)
-      lambda { @model.class.create! }.should raise_error MassiveRecord::ORM::RecordInvalid
+      allow(@model.class).to receive(:new).and_return(@model)
+      expect { @model.class.create! }.to raise_error MassiveRecord::ORM::RecordInvalid
     end
 
     describe ":on option" do
       before { @model.consider_carma = true }
 
       it "takes :on => create into consideration" do
-        @model.should_not be_valid
-        @model.errors[:carma].length.should eq 1
+        expect(@model).not_to be_valid
+        expect(@model.errors[:carma].length).to eq 1
       end
     end
   end

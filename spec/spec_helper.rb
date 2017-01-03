@@ -7,7 +7,7 @@ Bundler.require :default, :development
 SPEC_DIR = File.dirname(__FILE__) unless defined? SPEC_DIR
 MR_CONFIG = YAML.load_file(File.join(SPEC_DIR, 'config.yml')) unless defined? MR_CONFIG
 
-Rspec.configure do |c|
+RSpec.configure do |c|
   #c.fail_fast = true 
 end
 

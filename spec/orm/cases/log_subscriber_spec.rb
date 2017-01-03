@@ -2,12 +2,12 @@ require 'spec_helper'
 require "active_support/log_subscriber/test_helper"
 
 describe "log subscriber" do
-  include ActiveSupport::BufferedLogger::Severity
+  include ActiveSupport::Logger::Severity
 
   include SetUpHbaseConnectionBeforeAll
   include SetTableNamesToTestTable
 
-  let(:level) { ActiveSupport::BufferedLogger::Severity::DEBUG }
+  let(:level) { ActiveSupport::Logger::Severity::DEBUG }
   subject { ActiveSupport::LogSubscriber::TestHelper::MockLogger.new(level) }
 
   before do
@@ -122,7 +122,7 @@ describe "log subscriber" do
 
 
   context "info" do
-    let(:level) { ActiveSupport::BufferedLogger::Severity::INFO }
+    let(:level) { ActiveSupport::Logger::Severity::INFO }
 
     it "should have nothing logged to begin with" do
       subject.logged(:debug).size.should be_zero

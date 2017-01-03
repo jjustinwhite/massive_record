@@ -1,6 +1,3 @@
-require 'active_support/secure_random'
-
-#
 # This module does a couple of things:
 #   1.  Iterates over all tables and adds a prefix to
 #       them so that the classes will be uniq for

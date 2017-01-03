@@ -7,7 +7,7 @@ Bundler::GemHelper.install_tasks
 require "rspec/core/rake_task"
 RSpec::Core::RakeTask.new(:spec)
 
-require 'rake/rdoctask'
+require 'rdoc/task'
 Rake::RDocTask.new do |rdoc|
   rdoc.rdoc_dir = 'rdoc'
   rdoc.title = "MassiveRecord #{MassiveRecord::VERSION}"

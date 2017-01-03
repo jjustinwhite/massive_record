@@ -1,6 +1,8 @@
 pkg/*
 *.gem
 .bundle
+.byebug_history
+tags
 .DS_Store
 spec/config.yml
 rdoc/

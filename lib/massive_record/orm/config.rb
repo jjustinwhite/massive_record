@@ -9,7 +9,7 @@ module MassiveRecord
       end
 
       module ClassMethods
-        extend Memoist
+        include Memoizer
 
         @@connection = nil
 

@@ -10,7 +10,7 @@ module MassiveRecord
       # specific sub class proxies.
       #
       class Proxy
-        instance_methods.each { |m| undef_method m unless m.to_s =~ /^(?:nil\?|send|object_id|to_a|to_s|extend|equal\?)$|^__|^respond_to|^should|^instance_variable_/ }
+        instance_methods.each { |m| undef_method m unless m.to_s =~ /^(?:nil\?|send|object_id|to_a|to_s|extend|singleton_class|equal\?)$|^__|^respond_to|^should|^instance_variable_/ }
 
         attr_reader :proxy_target
         attr_accessor :proxy_owner, :metadata

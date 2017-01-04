@@ -135,7 +135,7 @@ module MassiveRecord
         end
 
         def find_one(id, options) # :nodoc:
-          raise RecordNotFound.new("Could not find #{model_name} with id=nil") if id.empty? || id.nil?
+          raise RecordNotFound.new("Could not find #{model_name} with id=nil") if id.blank?
 
           query_hbase(id, options).first.tap do |record|
             raise RecordNotFound.new("Could not find #{model_name} with id=#{id}") if record.nil? || record.id != id

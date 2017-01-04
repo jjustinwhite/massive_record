@@ -11,6 +11,6 @@ require 'massive_record/orm/base'
 require 'massive_record/orm/raw_data'
 
 # Others
-if defined?(::Rails::VERSION) && ::Rails::VERSION::MAJOR == 3
+if defined?(::Rails::VERSION) && ::Rails::VERSION::MAJOR >= 3
   require 'massive_record/rails/railtie'
 end

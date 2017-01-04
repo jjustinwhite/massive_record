@@ -115,7 +115,7 @@ describe MassiveRecord::ORM::Base do
 
     it "should stringify keys set on attributes" do
       model = TestClass.allocate
-      model.init_with 'attributes' => {:foo => :bar}
+      model.init_with 'attributes' => {:foo => 'bar'}
       expect(model.attributes.keys).to include("foo")
     end
 

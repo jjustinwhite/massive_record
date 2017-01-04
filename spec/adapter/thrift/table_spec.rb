@@ -3,19 +3,19 @@ require 'spec_helper'
 
 describe "A table" do
 
-  let(:conn) do
+  def conn
     c = MassiveRecord::Wrapper::Connection.new(:host => MR_CONFIG['host'], :port => MR_CONFIG['port'])
     c.open
     c
   end
 
-  let(:rawTable) do
+  def rawTable
     t = MassiveRecord::Wrapper::Table.new(conn, MR_CONFIG['table'])
     t.destroy if t.exists?
     t
   end
 
-  let(:table) do
+  def table
     t = rawTable
     t.column_families.create(MassiveRecord::Wrapper::ColumnFamily.new(:info, :max_versions => 3))
     t.column_families.create(:misc)

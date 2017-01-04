@@ -21,7 +21,7 @@ describe "A connection" do
   describe "open / close" do
 
     it "should not be open be default" do
-      expect(conn.open?).to be_false
+      expect(conn.open?).to be_falsey
     end
     
     it "should be open if opened" do

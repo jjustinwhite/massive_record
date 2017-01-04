@@ -1,14 +1,14 @@
 require 'spec_helper'
 
 describe MassiveRecord::Adapters::Thrift::Table do
-  let(:connection) do
-    MassiveRecord::Wrapper::Connection.new(:host => MR_CONFIG['host'], :port => MR_CONFIG['port']).tap do |connection|
+  def connection
+    @connection ||= MassiveRecord::Wrapper::Connection.new(:host => MR_CONFIG['host'], :port => MR_CONFIG['port']).tap do |connection|
       connection.open
     end
   end
 
-  subject do
-    MassiveRecord::Wrapper::Table.new(connection, MR_CONFIG['table'])
+  def subject
+    @subject ||= MassiveRecord::Wrapper::Table.new(connection, MR_CONFIG['table'])
   end
 
   before :all do

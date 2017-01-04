@@ -8,7 +8,7 @@ describe ModelWithoutDefaultId do
 
   context "with auto increment id" do
     describe '#id' do
-      subject { super().id }
+      subject { described_class.id }
       it { be_nil }
     end
 
@@ -43,8 +43,8 @@ describe ModelWithoutDefaultId do
   end
 
   context "without auto increment id" do
-    before(:all) { subject.class.set_id_from_factory_before_create = false }
-    after(:all) { subject.class.set_id_from_factory_before_create = true }
+    before(:all) { described_class.set_id_from_factory_before_create = false }
+    after(:all) { described_class.set_id_from_factory_before_create = true }
 
     describe '#id' do
       subject { super().id }

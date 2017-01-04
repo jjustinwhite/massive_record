@@ -45,7 +45,7 @@ describe MassiveRecord::ORM::Persistence::Operations::AtomicOperation do
     it "sets record's @new_record flag to false" do
       record.instance_variable_set(:@new_record, true)
       subject.execute
-      expect(record.instance_variable_get(:@new_record)).to be_false
+      expect(record.instance_variable_get(:@new_record)).to eq false
     end
 
     it "returns the new state of attribute updated" do

@@ -30,7 +30,7 @@ describe "A table" do
     end
 
     it "should not exists in the database" do
-      expect(@myRawTable.exists?).to be_false
+      expect(@myRawTable.exists?).to eq false
     end
   
     it "should not have any column families" do
@@ -45,7 +45,7 @@ describe "A table" do
   
       it "should destroy the test table" do
         t = table
-        expect(t.destroy).to be_true
+        expect(t.destroy).to eq true
       end
 
       it "should exists in the database" do

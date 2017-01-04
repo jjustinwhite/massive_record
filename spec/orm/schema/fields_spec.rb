@@ -75,15 +75,15 @@ describe MassiveRecord::ORM::Schema::Fields do
 
     describe "with no contained_in" do
       it "should return true if name is taken" do
-        expect(@fields.attribute_name_taken?("phone")).to be_true
+        expect(@fields.attribute_name_taken?("phone")).to eq false
       end
 
       it "should accept and return true if name, given as a symbol, is taken" do
-        expect(@fields.attribute_name_taken?(:phone)).to be_true
+        expect(@fields.attribute_name_taken?(:phone)).to eq true
       end
 
       it "should return false if name is not taken" do
-        expect(@fields.attribute_name_taken?("not_taken")).to be_false
+        expect(@fields.attribute_name_taken?("not_taken")).to eq false
       end
     end
 
@@ -94,12 +94,12 @@ describe MassiveRecord::ORM::Schema::Fields do
 
       it "should ask object it is contained in for the truth about if attribute name is taken" do
         expect(@fields.contained_in).to receive(:attribute_name_taken?).and_return true
-        expect(@fields.attribute_name_taken?(:foo)).to be_true
+        expect(@fields.attribute_name_taken?(:foo)).to eq true
       end
 
       it "should not ask object it is contained in if asked not to" do
         expect(@fields.contained_in).not_to receive(:attribute_name_taken?)
-        expect(@fields.attribute_name_taken?(:foo, true)).to be_false
+        expect(@fields.attribute_name_taken?(:foo, true)).to eq false
       end
     end
   end

@@ -32,7 +32,7 @@ shared_examples_for "validateable massive record model" do
 
     it "should return false on save if record is not valid" do
       @invalidate_model.call(@model)
-      expect(@model.save).to be_false
+      expect(@model.save).to eq false
     end
 
     it "should not save recurd if record is not valid" do

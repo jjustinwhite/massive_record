@@ -68,7 +68,7 @@ describe MassiveRecord::ORM::Schema::ColumnFamily do
     column_family_2 = MassiveRecord::ORM::Schema::ColumnFamily.new(:name => :name)
 
     expect(column_family_1).to eq(column_family_2)
-    expect(column_family_1.eql?(column_family_2)).to be_true
+    expect(column_family_1.eql?(column_family_2)).to eq true
   end
 
   it "should have the same hash value for two families with the same name" do
@@ -104,15 +104,15 @@ describe MassiveRecord::ORM::Schema::ColumnFamily do
 
     describe "with no contained_in" do
       it "should return true if name is taken" do
-        expect(@column_family.attribute_name_taken?("phone")).to be_true
+        expect(@column_family.attribute_name_taken?("phone")).to eq true
       end
 
       it "should accept and return true if name, given as a symbol, is taken" do
-        expect(@column_family.attribute_name_taken?(:phone)).to be_true
+        expect(@column_family.attribute_name_taken?(:phone)).to eq true
       end
 
       it "should return false if name is not taken" do
-        expect(@column_family.attribute_name_taken?("not_taken")).to be_false
+        expect(@column_family.attribute_name_taken?("not_taken")).to eq false
       end
     end
 
@@ -123,12 +123,12 @@ describe MassiveRecord::ORM::Schema::ColumnFamily do
 
       it "should ask object it is contained in for the truth about if attribute name is taken" do
         expect(@column_family.contained_in).to receive(:attribute_name_taken?).and_return true
-        expect(@column_family.attribute_name_taken?(:foo)).to be_true
+        expect(@column_family.attribute_name_taken?(:foo)).to eq true
       end
 
       it "should not ask object it is contained in if asked not to" do
         expect(@column_family.contained_in).not_to receive(:attribute_name_taken?)
-        expect(@column_family.attribute_name_taken?(:foo, true)).to be_false
+        expect(@column_family.attribute_name_taken?(:foo, true)).to eq false
       end
     end
   end

@@ -32,26 +32,26 @@ describe "Time zone awareness" do
     it "should do conversion when attribute is time" do
       in_time_zone "utc" do
         field.type = :time
-        expect(TestClass.send(:time_zone_conversion_on_field?, field)).to be_true
+        expect(TestClass.send(:time_zone_conversion_on_field?, field)).to eq true
       end
     end
 
     it "should not do conversion if time_zone_aware_attributes is false" do
       field.type = :time
       TestClass.time_zone_aware_attributes = false
-      expect(TestClass.send(:time_zone_conversion_on_field?, field)).to be_false
+      expect(TestClass.send(:time_zone_conversion_on_field?, field)).to eq false
     end
 
     it "should not do conversion when attribute name is included in skip list" do
       field.type = :time
       TestClass.skip_time_zone_conversion_for_attributes = ['tested_at']
-      expect(TestClass.send(:time_zone_conversion_on_field?, field)).to be_false
+      expect(TestClass.send(:time_zone_conversion_on_field?, field)).to eq false
       TestClass.skip_time_zone_conversion_for_attributes = []
     end
 
     it "should not do conversion when attribute is string field" do
       field.type = :string
-      expect(TestClass.send(:time_zone_conversion_on_field?, field)).to be_false
+      expect(TestClass.send(:time_zone_conversion_on_field?, field)).to eq false
     end
   end
 

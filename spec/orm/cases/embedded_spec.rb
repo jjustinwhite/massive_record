@@ -13,7 +13,7 @@ describe MassiveRecord::ORM::Embedded do
   it "should have default_attributes_from_schema" do
     expect(Address.default_attributes_from_schema["street"]).to be_nil
     expect(Address.default_attributes_from_schema["number"]).to be_nil
-    expect(Address.default_attributes_from_schema["nice_place"]).to be_true
+    expect(Address.default_attributes_from_schema["nice_place"]).to eq true
   end
 
   it "should have attributes_schema" do
@@ -21,7 +21,7 @@ describe MassiveRecord::ORM::Embedded do
   end
 
   it "should have a default value set" do
-    expect(subject.nice_place).to be_true
+    expect(subject.nice_place).to eq true
   end
 
 

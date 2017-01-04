@@ -20,7 +20,7 @@ module MassiveRecord::ORM::IdentityMap
       }
       mw.call({})
 
-      expect(called).to be_true
+      expect(called).to eq true
     end
 
     it "is enabled during delegation" do

@@ -18,7 +18,7 @@ describe MassiveRecord::ORM::Schema::Field do
     end
 
     it "should default allow nil to true" do
-      expect(MassiveRecord::ORM::Schema::Field.new(:name => "a_value").allow_nil).to be_true
+      expect(MassiveRecord::ORM::Schema::Field.new(:name => "a_value").allow_nil).to eq true
     end
   end
 
@@ -92,7 +92,7 @@ describe MassiveRecord::ORM::Schema::Field do
     field_2 = MassiveRecord::ORM::Schema::Field.new(:name => :name)
 
     expect(field_1).to eq(field_2)
-    expect(field_1.eql?(field_2)).to be_true
+    expect(field_1.eql?(field_2)).to eq true
   end
 
   it "should have the same hash value for two families with the same name" do
@@ -111,7 +111,7 @@ describe MassiveRecord::ORM::Schema::Field do
 
     it "should decode a boolean value" do
       @subject = MassiveRecord::ORM::Schema::Field.new(:name => :status, :type => :boolean)
-      expect(@subject.decode("1")).to be_true
+      expect(@subject.decode("1")).to eq true
       expect(@subject.decode("0")).to be_falsey
       expect(@subject.decode("")).to be_nil
       expect(@subject.decode(nil)).to be_nil

@@ -14,7 +14,7 @@ describe ModelWithoutDefaultId do
 
     describe '#set_id_from_factory_before_create' do
       subject { super().set_id_from_factory_before_create }
-      it { be_true }
+      it { eq true }
     end
 
     it "sets id to what next_id returns" do

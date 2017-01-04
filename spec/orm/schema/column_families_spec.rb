@@ -134,23 +134,23 @@ describe MassiveRecord::ORM::Schema::ColumnFamilies do
     end
 
     it "should return true if name is taken" do
-      expect(@column_families.attribute_name_taken?("phone")).to be_true
+      expect(@column_families.attribute_name_taken?("phone")).to eq true
     end
 
     it "should accept and return true if name, given as a symbol, is taken" do
-      expect(@column_families.attribute_name_taken?(:other)).to be_true
+      expect(@column_families.attribute_name_taken?(:other)).to eq true
     end
 
     it "should return false if name is not taken" do
-      expect(@column_families.attribute_name_taken?("not_taken")).to be_false
+      expect(@column_families.attribute_name_taken?("not_taken")).to eq false
     end
 
     it "should return the same answer if asked from a field" do
-      expect(@name_field.fields.attribute_name_taken?("misc")).to be_true
+      expect(@name_field.fields.attribute_name_taken?("misc")).to eq true
     end
 
     it "should return false if only asked to check inside of it's own set" do
-      expect(@name_field.fields.attribute_name_taken?("misc", true)).to be_false
+      expect(@name_field.fields.attribute_name_taken?("misc", true)).to eq false
     end
   end
 

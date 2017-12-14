@@ -1,7 +1,7 @@
 module MassiveRecord
   module Wrapper
     class Cell
-      SUPPORTED_TYPES = [NilClass, String, Fixnum, Bignum]
+      SUPPORTED_TYPES = [NilClass, String, Integer]
 
       attr_reader :value
       attr_accessor :created_at
@@ -35,7 +35,7 @@ module MassiveRecord
         self.value = opts[:value]
         self.created_at = opts[:created_at]
       end
-    
+
       def value=(v)
         raise "#{v} was a #{v.class}, but it must be a one of: #{SUPPORTED_TYPES.join(', ')}" unless SUPPORTED_TYPES.include? v.class
 
@@ -46,7 +46,7 @@ module MassiveRecord
         case value
         when String
           value.force_encoding(Encoding::UTF_8)
-        when Fixnum, Bignum
+        when Integer
           self.class.integer_to_hex_string(value)
         when NilClass
           value

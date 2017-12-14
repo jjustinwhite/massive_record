@@ -46,7 +46,11 @@ module MassiveRecord
         ActiveSupport.on_load(:massive_record) do
           instantiate_observers
 
-          if ::Rails::VERSION::MAJOR >= 3 && ::Rails::VERSION::MINOR >= 1
+          if ::Rails::VERSION::MAJOR >= 5
+            ActiveSupport::Reloader.to_prepare do
+              MassiveRecord::ORM::Base.instantiate_observers
+            end
+          elsif ::Rails::VERSION::MAJOR >= 3 && ::Rails::VERSION::MINOR >= 1
             ActionDispatch::Reloader.to_prepare do
               MassiveRecord::ORM::Base.instantiate_observers
             end
